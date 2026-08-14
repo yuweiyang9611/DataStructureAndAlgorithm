@@ -1,0 +1,49 @@
+name: Scenario Benchmarks
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每周一 UTC 02:00 保存一次趋势样本；定时任务不阻塞日常提交反馈。
+    - cron: "0 2 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    name: Measure integrated scenarios
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore benchmark dependencies
+        run: dotnet restore DataStructureAndAlgorithm.Benchmarks/DataStructureAndAlgorithm.Benchmarks.csproj
+
+      - name: Run scenario benchmarks
+        run: >-
+          dotnet run
+          --project DataStructureAndAlgorithm.Benchmarks/DataStructureAndAlgorithm.Benchmarks.csproj
+          --configuration Release
+          --no-restore
+          --
+          --filter "*ScenarioBenchmarks*"
+          --exporters json markdown
+
+      - name: Upload raw benchmark results
+        uses: actions/upload-artifact@v7
+        with:
+          name: scenario-benchmarks-${{ github.run_number }}
+          path: BenchmarkDotNet.Artifacts
+          if-no-files-found: error
+          retention-days: 30
+
+      # 此工作流刻意不设置耗时硬阈值：共享 GitHub Runner 的邻居负载会造成抖动。
+      # 结果作为可下载的 JSON/Markdown 趋势证据，确认稳定回归后再由人决定是否优化。

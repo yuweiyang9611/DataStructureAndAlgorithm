@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+# CI 只需要读取仓库内容，遵循最小权限原则。
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test (.NET 10 / ${{ matrix.os }})
+    strategy:
+      # 一个系统失败后仍让另一个系统完成，报告才足以区分代码回归与平台差异。
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore DataStructureAndAlgorithm.slnx
+
+      - name: Build Release
+        run: dotnet build DataStructureAndAlgorithm.slnx --configuration Release --no-restore
+
+      - name: Run tests
+        if: runner.os == 'Windows'
+        run: >-
+          dotnet test DataStructureAndAlgorithm.slnx
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=tests.trx"
+          --results-directory TestResults
+
+      # 覆盖率插桩成本较高且结果与操作系统无关；只在 Linux 收集一次，Windows 专注跨平台正确性。
+      - name: Run tests and collect coverage
+        if: runner.os == 'Linux'
+        run: >-
+          dotnet test DataStructureAndAlgorithm.slnx
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=tests.trx"
+          --results-directory TestResults
+          --collect "XPlat Code Coverage"
+
+      - name: Restore repository tools
+        if: runner.os == 'Linux'
+        run: dotnet tool restore
+
+      - name: Generate readable coverage report
+        if: runner.os == 'Linux'
+        run: >-
+          dotnet tool run reportgenerator
+          -reports:"TestResults/**/coverage.cobertura.xml"
+          -targetdir:"TestResults/CoverageReport"
+          -reporttypes:"Html;Cobertura;MarkdownSummaryGithub"
+
+      - name: Publish coverage summary
+        if: runner.os == 'Linux'
+        run: cat TestResults/CoverageReport/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload platform test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          # Matrix 作业必须使用不同名称，否则两个运行器会尝试创建同名 artifact。
+          name: test-results-${{ runner.os }}
+          path: TestResults
+          if-no-files-found: warn

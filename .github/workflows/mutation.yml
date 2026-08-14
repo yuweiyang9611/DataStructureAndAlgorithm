@@ -1,0 +1,42 @@
+name: Mutation testing
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 变异测试比普通单元测试慢得多，每周运行即可；需要时也可以手动触发。
+    - cron: "17 18 * * 6"
+
+permissions:
+  contents: read
+
+jobs:
+  mutation-test:
+    name: Test whether critical tests can detect injected bugs
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies and local tools
+        run: |
+          dotnet restore DataStructureAndAlgorithm.slnx
+          dotnet tool restore
+
+      - name: Run scoped mutation testing
+        working-directory: DataStructureAndAlgorithm.Test
+        run: dotnet stryker
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mutation-report
+          path: DataStructureAndAlgorithm.Test/StrykerOutput
+          if-no-files-found: warn

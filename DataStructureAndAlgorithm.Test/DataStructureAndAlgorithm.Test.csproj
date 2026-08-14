@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>14.0</LangVersion>
+        <ImplicitUsings>false</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+        <PackageReference Include="FsCheck.Xunit" Version="3.3.3" />
+        <PackageReference Include="xunit" Version="2.8.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <!-- ReflectionMagic简化了通过反射获取不同程序集、不同类中私有成员的过程(仅用于测试，否则访问修饰符会失去作用) -->
+        <PackageReference Include="ReflectionMagic" Version="5.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DataStructureAndAlgorithm\DataStructureAndAlgorithm.csproj" />
+      <ProjectReference Include="..\DataStructureAndAlgorithm.Scenarios.CityDelivery\DataStructureAndAlgorithm.Scenarios.CityDelivery.csproj" />
+      <ProjectReference Include="..\DataStructureAndAlgorithm.Scenarios.MiniSearch\DataStructureAndAlgorithm.Scenarios.MiniSearch.csproj" />
+      <ProjectReference Include="..\DataStructureAndAlgorithm.Scenarios.MiniStorage\DataStructureAndAlgorithm.Scenarios.MiniStorage.csproj" />
+      <ProjectReference Include="..\DataStructureAndAlgorithm.Scenarios.ProjectScheduling\DataStructureAndAlgorithm.Scenarios.ProjectScheduling.csproj" />
+    </ItemGroup>
+</Project>

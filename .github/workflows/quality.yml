@@ -1,0 +1,52 @@
+name: Quality gates
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  formatting-and-coverage:
+    name: Formatting, analyzers and coverage thresholds
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies and local tools
+        run: |
+          dotnet restore DataStructureAndAlgorithm.slnx
+          dotnet tool restore
+
+      - name: Verify formatting and analyzer fixes
+        run: dotnet format DataStructureAndAlgorithm.slnx --verify-no-changes --no-restore
+
+      - name: Build with warnings treated as errors
+        run: dotnet build DataStructureAndAlgorithm.slnx --configuration Release --no-restore
+
+      - name: Run tests with coverage
+        run: >-
+          dotnet test DataStructureAndAlgorithm.slnx
+          --configuration Release
+          --no-build
+          --results-directory TestResults
+          --collect "XPlat Code Coverage"
+
+      - name: Enforce coverage thresholds
+        shell: pwsh
+        run: >-
+          ./tools/check_coverage.ps1
+          -Report "TestResults"
+          -MinimumLineCoverage 80
+          -MinimumBranchCoverage 70

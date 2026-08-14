@@ -1,0 +1,41 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs,csx}]
+indent_style = space
+indent_size = 4
+
+# 现代语法服务于可读性：统一文件作用域命名空间和模式匹配，但不为了缩短代码隐藏类型意图。
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_collection_expression = true:suggestion
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
+
+# using 放在命名空间外并由 System 优先，减少不同 IDE 产生的无意义 diff。
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# 质量基线聚焦可能造成运行时错误、资源泄漏或错误异常传播的规则；命名与旧教学 API 设计建议分阶段迁移。
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.CA1062.severity = warning
+dotnet_diagnostic.CA2000.severity = warning
+dotnet_diagnostic.CA2014.severity = warning
+dotnet_diagnostic.CA2021.severity = warning
+dotnet_diagnostic.CA2200.severity = warning
+dotnet_diagnostic.CA2254.severity = warning
+
+[*.{csproj,props,targets,slnx,xml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

@@ -1,0 +1,10 @@
+# 仓库和 CI 同时运行在 Windows 与 Linux：统一使用 LF，避免检出平台改变格式检查结果。
+* text=auto eol=lf
+
+# 二进制学习资料必须保持原始字节，不能参与换行转换。
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary

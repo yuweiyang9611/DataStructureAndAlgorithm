@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <!-- 所有项目共享同一语言与质量基线，避免某个新项目悄悄退回旧语法或关闭可空分析。 -->
+    <LangVersion>14.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+</Project>
