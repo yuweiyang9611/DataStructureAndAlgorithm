@@ -1,5 +1,7 @@
 # DataStructureAndAlgorithm
 
+> 本公开仓库由原私有仓库的当前文件快照重新建立。为保护个人隐私，旧 Git 提交历史和 PR 记录没有迁移。详见 [仓库迁移与隐私说明](MIGRATION_AND_PRIVACY.md)。
+
 一个基于 `.NET 10` 和 `C# 14` 的数据结构与算法学习项目。仓库包含算法类库、xUnit/FsCheck 测试、可输出 JSON/Mermaid 步骤的 Demo、四个支持结构化追踪的综合场景，以及独立的 BenchmarkDotNet 性能实验；不包含 ASP.NET 服务。
 
 完整学习顺序、源码导读和 C# 最佳实践请参阅 [C# 数据结构与算法学习指导](docs/CSharp数据结构与算法学习指导.md)。编写新模块前建议先阅读 [API 设计与比较器约定](docs/API设计与比较器约定.md)，避免空值、区间、重复值和比较语义在不同结构间漂移。

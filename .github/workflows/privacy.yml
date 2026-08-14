@@ -1,0 +1,54 @@
+name: Privacy
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: privacy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commit-email-privacy:
+    name: Commit email privacy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Reject private commit emails
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $allowed = "^(?:[^@\s]+@users\.noreply\.github\.com|noreply@github\.com)$"
+          $violations = [System.Collections.Generic.List[string]]::new()
+
+          foreach ($row in (& git log HEAD --format="%H%x09%ae%x09%ce")) {
+            $fields = $row -split "`t", 3
+            if ($fields.Count -ne 3) {
+              throw "Unexpected Git log output while inspecting commit metadata."
+            }
+
+            if ($fields[1] -notmatch $allowed) {
+              $violations.Add("$($fields[0]) (author)")
+            }
+
+            if ($fields[2] -notmatch $allowed) {
+              $violations.Add("$($fields[0]) (committer)")
+            }
+          }
+
+          if ($violations.Count -gt 0) {
+            $locations = $violations -join ", "
+            throw "Private or non-GitHub-noreply commit email detected at: $locations. The email value is intentionally hidden."
+          }
+
+          Write-Host "Commit email privacy check passed."
