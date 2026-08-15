@@ -15,4 +15,18 @@
 
 提交前请在 GitHub 的邮箱设置中启用邮箱隐私，并将 Git 配置为 GitHub noreply 地址。不要在 Issue、Pull Request、评论、提交消息、日志或文档中粘贴私人邮箱。如果分支中已经出现私人邮箱，应先在本地重写相关提交，再推送或创建 Pull Request。
 
-仓库使用本地 Git hook 和持续集成检查提交元数据。检查失败时只报告提交 SHA 和违规字段，不回显邮箱本身。
+仓库使用可跟踪的本地 Git hook 和持续集成检查提交元数据。检查失败时只报告提交 SHA 和违规字段，不回显邮箱本身。
+
+克隆仓库后，推荐运行启用脚本：
+
+```powershell
+pwsh -NoProfile -File ./tools/enable_git_hooks.ps1
+```
+
+没有 PowerShell 时可直接运行等价命令：
+
+```bash
+git config --local core.hooksPath .githooks
+```
+
+该配置只作用于当前克隆。启用后，`pre-commit` 会拒绝使用非 GitHub noreply 身份的新提交，`pre-push` 会检查所推送引用可达的全部提交。完整步骤见 [Git 隐私 hooks 启用说明](GIT_HOOKS_SETUP.md)。
