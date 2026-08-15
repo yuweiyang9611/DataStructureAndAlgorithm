@@ -17,10 +17,16 @@
 
 仓库使用可跟踪的本地 Git hook 和持续集成检查提交元数据。检查失败时只报告提交 SHA 和违规字段，不回显邮箱本身。
 
-克隆仓库后运行以下命令启用版本库中的 hooks：
+克隆仓库后，推荐运行启用脚本：
 
-```bash
-git config core.hooksPath .githooks
+```powershell
+pwsh -NoProfile -File ./tools/enable_git_hooks.ps1
 ```
 
-该配置只作用于当前克隆。启用后，`pre-commit` 会拒绝使用非 GitHub noreply 身份的新提交，`pre-push` 会检查所推送引用可达的全部提交。
+没有 PowerShell 时可直接运行等价命令：
+
+```bash
+git config --local core.hooksPath .githooks
+```
+
+该配置只作用于当前克隆。启用后，`pre-commit` 会拒绝使用非 GitHub noreply 身份的新提交，`pre-push` 会检查所推送引用可达的全部提交。完整步骤见 [Git 隐私 hooks 启用说明](GIT_HOOKS_SETUP.md)。

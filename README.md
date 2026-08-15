@@ -1,6 +1,8 @@
 # DataStructureAndAlgorithm
 
 > 本公开仓库由原私有仓库的当前文件快照重新建立。为保护个人隐私，旧 Git 提交历史和 PR 记录没有迁移。详见 [仓库迁移与隐私说明](MIGRATION_AND_PRIVACY.md)。
+>
+> 新克隆请按 [Git 隐私 hooks 启用说明](GIT_HOOKS_SETUP.md)执行一次本地配置。
 
 一个基于 `.NET 10` 和 `C# 14` 的数据结构与算法学习项目。仓库包含算法类库、xUnit/FsCheck 测试、可输出 JSON/Mermaid 步骤的 Demo、四个支持结构化追踪的综合场景，以及独立的 BenchmarkDotNet 性能实验；不包含 ASP.NET 服务。
 
