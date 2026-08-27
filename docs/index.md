@@ -41,7 +41,7 @@ hero:
       <p>先建立正确性思维，再扩大算法工具箱，最后把多个结构组合进真实约束。</p>
     </div>
 
-    <ol class="learning-path">
+  <ol class="learning-path">
       <li>
         <span class="learning-path-index">01</span>
         <div><strong>契约与复杂度</strong><small>半开区间、比较器、所有权、Big-O</small></div>
@@ -68,7 +68,7 @@ hero:
       </li>
     </ol>
 
-    <a class="learning-text-link" href="./CSharp数据结构与算法学习指导.html">查看完整学习顺序 <span aria-hidden="true">→</span></a>
+  <a class="learning-text-link" href="./CSharp数据结构与算法学习指导.html">查看完整学习顺序 <span aria-hidden="true">→</span></a>
   </section>
 
   <section class="learning-section" aria-labelledby="topics-title">
@@ -80,7 +80,7 @@ hero:
       <p>每条路线都连接概念、实现、测试与练习，不需要在仓库目录里猜下一步。</p>
     </div>
 
-    <div class="learning-topic-grid">
+  <div class="learning-topic-grid">
       <a class="learning-topic-card learning-topic-card--primary" href="./CSharp数据结构与算法学习指导.html">
         <span class="learning-card-label">FOUNDATION</span>
         <h3>数据结构与算法主线</h3>
@@ -117,7 +117,7 @@ hero:
       <p>同一个结构在孤立练习里容易理解，在目标函数、容量和恢复约束中才真正学会取舍。</p>
     </div>
 
-    <div class="learning-projects">
+  <div class="learning-projects">
       <article class="learning-project">
         <span class="learning-project-no">01</span>
         <div>
@@ -152,7 +152,7 @@ hero:
       </article>
     </div>
 
-    <a class="learning-text-link" href="./综合项目实战学习指导.html">进入综合项目路线 <span aria-hidden="true">→</span></a>
+  <a class="learning-text-link" href="./综合项目实战学习指导.html">进入综合项目路线 <span aria-hidden="true">→</span></a>
   </section>
 
   <section class="learning-evidence" aria-labelledby="evidence-title">
