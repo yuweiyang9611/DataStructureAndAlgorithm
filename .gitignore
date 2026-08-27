@@ -3,6 +3,7 @@ obj/
 /packages/
 node_modules/
 dist/
+docs/.vitepress/cache/
 .npm-cache/
 riderModule.iml
 /_ReSharper.Caches/

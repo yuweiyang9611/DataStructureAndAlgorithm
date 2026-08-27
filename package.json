@@ -1,0 +1,16 @@
+{
+  "name": "data-structure-and-algorithm-learning-site",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs --host 127.0.0.1",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs --host 127.0.0.1"
+  },
+  "devDependencies": {
+    "vitepress": "2.0.0-alpha.19"
+  }
+}
