@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "repository demos at build time",
+  "traces": [
+    {
+      "id": "gcd",
+      "title": "欧几里得最大公约数",
+      "category": "数论",
+      "level": "入门",
+      "summary": "观察被除数、除数与余数如何收缩，直到余数为零。",
+      "eventCount": 3,
+      "algorithm": "EuclideanGcd",
+      "source": "DataStructureAndAlgorithm/NumberTheory/NumberTheoryAlgorithms.cs",
+      "command": "dotnet run --project DataStructureAndAlgorithm.P3Demo -c Release -- gcd json",
+      "stateHints": {
+        "sequence": [],
+        "range": [],
+        "graph": []
+      },
+      "file": "gcd.json"
+    },
+    {
+      "id": "radix",
+      "title": "LSD 基数排序",
+      "category": "排序",
+      "level": "入门",
+      "summary": "逐轮处理固定位段，并保持此前低位的稳定顺序。",
+      "eventCount": 5,
+      "algorithm": "LSD Radix Sort",
+      "source": "DataStructureAndAlgorithm/Sorting/NonComparisonSortAlgorithms.cs",
+      "command": "dotnet run --project DataStructureAndAlgorithm.Demo -c Release -- radix",
+      "stateHints": {
+        "sequence": [
+          "values"
+        ],
+        "range": [
+          "processedBits"
+        ],
+        "graph": []
+      },
+      "file": "radix.json"
+    },
+    {
+      "id": "dijkstra",
+      "title": "Dijkstra 最短路",
+      "category": "图算法",
+      "level": "进阶",
+      "summary": "跟踪出队、松弛与过期候选，理解非负权前提下的最短路不变量。",
+      "eventCount": 14,
+      "algorithm": "Dijkstra",
+      "source": "DataStructureAndAlgorithm/Graph/WeightedGraphAlgorithms.cs",
+      "command": "dotnet run --project DataStructureAndAlgorithm.Demo -c Release -- dijkstra",
+      "stateHints": {
+        "sequence": [],
+        "range": [],
+        "graph": [
+          "source",
+          "from",
+          "to",
+          "vertex",
+          "distance"
+        ]
+      },
+      "file": "dijkstra.json"
+    },
+    {
+      "id": "matrix-chain",
+      "title": "矩阵链区间动态规划",
+      "category": "动态规划",
+      "level": "进阶",
+      "summary": "比较区间内的分割点，保留乘法次数更少的方案。",
+      "eventCount": 8,
+      "algorithm": "MatrixChain",
+      "source": "DataStructureAndAlgorithm/DynamicProgramming/P3DynamicProgrammingAlgorithms.cs",
+      "command": "dotnet run --project DataStructureAndAlgorithm.P3Demo -c Release -- matrix-chain json",
+      "stateHints": {
+        "sequence": [],
+        "range": [
+          "interval"
+        ],
+        "graph": []
+      },
+      "inputMetadata": {
+        "dimensions": [
+          40,
+          20,
+          30,
+          10,
+          30
+        ]
+      },
+      "file": "matrix-chain.json"
+    },
+    {
+      "id": "red-black",
+      "title": "左倾红黑树更新",
+      "category": "有序结构",
+      "level": "高级",
+      "summary": "观察插入、删除、旋转与颜色翻转；事件只描述局部操作，不伪造完整树状态。",
+      "eventCount": 16,
+      "algorithm": "RedBlackTree",
+      "source": "DataStructureAndAlgorithm/Tree/RedBlackTree.cs",
+      "command": "dotnet run --project DataStructureAndAlgorithm.Demo -c Release -- red-black",
+      "stateHints": {
+        "sequence": [],
+        "range": [],
+        "graph": [
+          "oldRoot",
+          "newRoot",
+          "node",
+          "nodeColor"
+        ]
+      },
+      "file": "red-black.json"
+    },
+    {
+      "id": "project-scheduling",
+      "title": "项目调度时间线",
+      "category": "综合项目",
+      "level": "高级",
+      "summary": "从 DAG、关键路径和拓扑序推进到资源受限的任务落位。",
+      "eventCount": 11,
+      "algorithm": "ProjectScheduling",
+      "source": "DataStructureAndAlgorithm.Scenarios.ProjectScheduling/ProjectScheduler.cs",
+      "command": "dotnet run --project DataStructureAndAlgorithm.Scenarios.ProjectScheduling -c Release -- --trace json",
+      "stateHints": {
+        "sequence": [
+          "path",
+          "order"
+        ],
+        "range": [
+          "start",
+          "end"
+        ],
+        "graph": [
+          "id",
+          "demand"
+        ]
+      },
+      "file": "project-scheduling.json"
+    }
+  ]
+}

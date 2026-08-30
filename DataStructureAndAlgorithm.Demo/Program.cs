@@ -54,7 +54,8 @@ static object RunRadix(IAlgorithmTraceSink trace)
 static object RunDijkstra(IAlgorithmTraceSink trace)
 {
     var graph = new WeightedGraph<string>();
-    graph.AddEdge("A", "B", 4);
+    // 使用不同的候选距离，避免 PriorityQueue 对相同优先级不承诺稳定顺序而令教学 Trace 跨 SDK 漂移。
+    graph.AddEdge("A", "B", 5);
     graph.AddEdge("A", "C", 1);
     graph.AddEdge("C", "B", 2);
     graph.AddEdge("B", "D", 1);

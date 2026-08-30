@@ -6,7 +6,7 @@
 
 一个基于 `.NET 10` 和 `C# 14` 的数据结构与算法学习项目。仓库包含算法类库、xUnit/FsCheck 测试、可输出 JSON/Mermaid 步骤的 Demo、四个支持结构化追踪的综合场景，以及独立的 BenchmarkDotNet 性能实验；不包含 ASP.NET 服务。
 
-在线浏览与学习：[算法研习室](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/)。
+在线浏览与学习：[算法研习室](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/)。可从 [10 分钟快速开始](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0.html)、[22 个学习单元](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/%E5%AD%A6%E4%B9%A0%E5%8D%95%E5%85%83.html)或 [Trace 实验室](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/%E8%BF%BD%E8%B8%AA%E5%AE%9E%E9%AA%8C%E5%AE%A4.html)直接进入。
 
 完整学习顺序、源码导读和 C# 最佳实践请参阅 [C# 数据结构与算法学习指导](docs/CSharp数据结构与算法学习指导.md)。编写新模块前建议先阅读 [API 设计与比较器约定](docs/API设计与比较器约定.md)，避免空值、区间、重复值和比较语义在不同结构间漂移。
 

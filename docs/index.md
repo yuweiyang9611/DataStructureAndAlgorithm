@@ -8,16 +8,16 @@ hero:
   actions:
     - theme: brand
       text: 开始学习
-      link: /CSharp数据结构与算法学习指导
+      link: /开始学习
     - theme: alt
-      text: 浏览 100 题路线
-      link: /LeetCode100题完整学习指导
+      text: 打开学习单元
+      link: /学习单元
 ---
 
 <div class="learning-shell">
   <section class="learning-stats" aria-label="项目学习规模">
-    <div class="learning-stat"><strong>100 + 14</strong><span>主线与 P3 专题题</span></div>
-    <div class="learning-stat"><strong>465</strong><span>自动化测试</span></div>
+    <div class="learning-stat"><strong>100 + 14</strong><span>100 题主线 + 14 道 P3</span></div>
+    <div class="learning-stat"><strong>CI</strong><span>xUnit · FsCheck · 变异测试</span></div>
     <div class="learning-stat"><strong>4</strong><span>综合实战项目</span></div>
     <div class="learning-stat"><strong>22</strong><span>源码学习主题</span></div>
   </section>
@@ -68,7 +68,7 @@ hero:
       </li>
     </ol>
 
-  <a class="learning-text-link" href="./CSharp数据结构与算法学习指导.html">查看完整学习顺序 <span aria-hidden="true">→</span></a>
+  <a class="learning-text-link" href="./开始学习.html">选择适合你的第一步 <span aria-hidden="true">→</span></a>
   </section>
 
   <section class="learning-section" aria-labelledby="topics-title">

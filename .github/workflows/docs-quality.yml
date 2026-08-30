@@ -1,8 +1,7 @@
-name: Deploy learning site to Pages
+name: Check learning site
 
 on:
-  push:
-    branches: [main]
+  pull_request:
     paths:
       - "docs/**"
       - "package.json"
@@ -13,23 +12,21 @@ on:
       - "DataStructureAndAlgorithm.slnx"
       - "global.json"
       - "Directory.Build.*"
+      - ".github/workflows/docs-quality.yml"
       - ".github/workflows/pages.yml"
-  workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: docs-quality-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build learning site
+  verify:
+    name: Verify docs, links and Trace assets
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -48,13 +45,13 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
-
       - name: Install site dependencies
         run: npm ci
 
-      - name: Generate Trace assets from C# demos
+      - name: Audit production dependencies
+        run: npm audit --audit-level=high
+
+      - name: Regenerate Trace assets
         run: npm run docs:traces
 
       - name: Check committed Trace assets are current
@@ -66,24 +63,5 @@ jobs:
             exit 1
           fi
 
-      - name: Build VitePress site
+      - name: Build and verify site
         run: npm run docs:build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: docs/.vitepress/dist
-
-  deploy:
-    name: Deploy learning site
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
