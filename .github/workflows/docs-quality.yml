@@ -2,18 +2,6 @@ name: Check learning site
 
 on:
   pull_request:
-    paths:
-      - "docs/**"
-      - "package.json"
-      - "package-lock.json"
-      - "tools/check_site_rendering.mjs"
-      - "tools/generate_site_traces.mjs"
-      - "DataStructureAndAlgorithm*/**"
-      - "DataStructureAndAlgorithm.slnx"
-      - "global.json"
-      - "Directory.Build.*"
-      - ".github/workflows/docs-quality.yml"
-      - ".github/workflows/pages.yml"
 
 permissions:
   contents: read

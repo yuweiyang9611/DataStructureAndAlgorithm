@@ -166,10 +166,13 @@ for (const className of ['learning-path', 'learning-topic-grid', 'learning-proje
 }
 
 const moduleExpectations = [
+  ['主线/index.html', ['主线路线总览', '根据前置依赖和本地掌握记录推荐下一步']],
+  ['进阶/index.html', ['进阶路线总览', '尚未满足的前置会明确显示']],
+  ['综合项目/index.html', ['综合项目总览', '四个项目']],
   ['主线/阶段四至六.html', ['第六阶段：动态规划与回溯', '斐波那契', 'n 皇后']],
   ['进阶/十八周学习计划与验收.html', ['第 1–8 周核心阶段验收', '第 13–18 周学习顺序', '第 9–18 周验收']],
   ['综合项目/工程原则与证据链.html', ['四个项目共同的 C# 实践', '持续可证明的证据链']],
-  ['学习单元.html', ['class="unit-explorer"', '22 个可验证学习单元']],
+  ['学习单元.html', ['class="unit-explorer"', '22 个可验证学习单元', '根据依赖与复习时间推荐下一步', '掌握验证：自测 + 三类证据', 'class="unit-quiz"', 'class="unit-evidence"']],
   ['追踪实验室.html', ['class="trace-lab"']]
 ]
 
@@ -279,17 +282,21 @@ for (const sourcePage of [
 }
 
 const sitemapXml = readFileSync(join(outputRoot, 'sitemap.xml'), 'utf8')
+const sitemapLocations = new Set(
+  [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])
+)
+const sitemapBase = `${siteOrigin}${siteBase}`
 for (const sourcePage of [
   'CSharp数据结构与算法学习指导.html',
   'CSharp数据结构与算法进阶学习指导.html',
   '综合项目实战学习指导.html'
 ]) {
-  if (sitemapXml.includes(encodeURI(sourcePage))) {
+  if (sitemapLocations.has(new URL(sourcePage, sitemapBase).href)) {
     errors.push(`sitemap.xml: noindex source page must be excluded: ${sourcePage}`)
   }
 }
-for (const indexedPage of ['开始学习.html', '学习单元.html', '追踪实验室.html', '主线/阶段四至六.html']) {
-  if (!sitemapXml.includes(encodeURI(indexedPage))) {
+for (const indexedPage of ['开始学习.html', '学习单元.html', '追踪实验室.html', '主线/', '进阶/', '综合项目/', '主线/阶段四至六.html']) {
+  if (!sitemapLocations.has(new URL(indexedPage, sitemapBase).href)) {
     errors.push(`sitemap.xml: missing indexed page ${indexedPage}`)
   }
 }
@@ -298,16 +305,95 @@ const learningUnitSource = readFileSync(
   join(repositoryRoot, 'docs', '.vitepress', 'data', 'learningUnits.ts'),
   'utf8'
 )
-const learningUnitIds = [...learningUnitSource.matchAll(/^\s{4}id: '([^']+)'/gm)].map((match) => match[1])
+const unitBlocks = [...learningUnitSource.matchAll(/^\s{2}\{\r?\n([\s\S]*?)^\s{2}\},?$/gm)].map((match) => match[1])
+const learningUnitIds = unitBlocks
+  .map((block) => block.match(/^\s{4}id: '([^']+)'/m)?.[1])
+  .filter(Boolean)
 const uniqueLearningUnitIds = new Set(learningUnitIds)
 if (learningUnitIds.length !== 22 || uniqueLearningUnitIds.size !== 22) {
   errors.push(`learningUnits.ts: expected 22 unique units, found ${learningUnitIds.length}/${uniqueLearningUnitIds.size}`)
 }
 
-for (const block of learningUnitSource.matchAll(/prerequisites: \[([^\]]*)\]/g)) {
-  for (const match of block[1].matchAll(/'([^']+)'/g)) {
-    if (!uniqueLearningUnitIds.has(match[1])) {
-      errors.push(`learningUnits.ts: unknown prerequisite ${match[1]}`)
+const knownStages = new Set(['S02', 'S03', 'S04', 'S05', 'S06', 'A01', 'A02', 'P03', 'PRACTICE', 'S07'])
+const knownDifficulties = new Set(['入门', '进阶', '高级', '混合'])
+const prerequisitesById = new Map()
+for (const block of unitBlocks) {
+  const id = block.match(/^\s{4}id: '([^']+)'/m)?.[1]
+  if (!id) continue
+  const stage = block.match(/stage: '([^']+)'/)?.[1]
+  const difficulty = block.match(/difficulty: '([^']+)'/)?.[1]
+  if (!knownStages.has(stage)) errors.push(`learningUnits.ts: invalid stage ${stage} for ${id}`)
+  if (!knownDifficulties.has(difficulty)) errors.push(`learningUnits.ts: invalid difficulty ${difficulty} for ${id}`)
+
+  const prerequisiteMatch = block.match(/prerequisites: \[([^\]]*)\]/)
+  if (!prerequisiteMatch) {
+    errors.push(`learningUnits.ts: missing literal prerequisites array for ${id}`)
+  }
+  const prerequisiteText = prerequisiteMatch?.[1] ?? ''
+  const prerequisites = [...prerequisiteText.matchAll(/'([^']+)'/g)].map((match) => match[1])
+  const unsupportedPrerequisiteSyntax = prerequisiteText
+    .replace(/'[^']+'/g, '')
+    .replace(/,/g, '')
+    .trim()
+  if (unsupportedPrerequisiteSyntax) {
+    errors.push(`learningUnits.ts: prerequisites for ${id} must use single-quoted literal IDs`)
+  }
+  if (new Set(prerequisites).size !== prerequisites.length) {
+    errors.push(`learningUnits.ts: duplicate prerequisite for ${id}`)
+  }
+  if (prerequisites.includes(id)) errors.push(`learningUnits.ts: ${id} cannot depend on itself`)
+  for (const prerequisite of prerequisites) {
+    if (!uniqueLearningUnitIds.has(prerequisite)) {
+      errors.push(`learningUnits.ts: unknown prerequisite ${prerequisite} for ${id}`)
+    }
+  }
+  prerequisitesById.set(id, prerequisites)
+}
+
+const indegree = new Map(learningUnitIds.map((id) => [id, prerequisitesById.get(id)?.length ?? 0]))
+const dependents = new Map(learningUnitIds.map((id) => [id, []]))
+for (const [id, prerequisites] of prerequisitesById) {
+  for (const prerequisite of prerequisites) dependents.get(prerequisite)?.push(id)
+}
+const readyUnits = learningUnitIds.filter((id) => indegree.get(id) === 0)
+let visitedUnitCount = 0
+while (readyUnits.length) {
+  const id = readyUnits.shift()
+  visitedUnitCount += 1
+  for (const dependent of dependents.get(id) ?? []) {
+    const nextDegree = indegree.get(dependent) - 1
+    indegree.set(dependent, nextDegree)
+    if (nextDegree === 0) readyUnits.push(dependent)
+  }
+}
+if (visitedUnitCount !== learningUnitIds.length) {
+  errors.push('learningUnits.ts: prerequisite graph contains a cycle')
+}
+
+const learningUnitHtml = htmlByRelativePath.get('学习单元.html') ?? ''
+const quizFieldsetCount = [...learningUnitHtml.matchAll(/class="unit-quiz"/g)].length
+const evidenceFieldsetCount = [...learningUnitHtml.matchAll(/class="unit-evidence"/g)].length
+const quizRadioCount = [...learningUnitHtml.matchAll(/<input\b[^>]*\btype="radio"/g)].length
+const evidenceCheckboxCount = [...learningUnitHtml.matchAll(/<input\b[^>]*\btype="checkbox"/g)].length
+if (quizFieldsetCount !== learningUnitIds.length) {
+  errors.push(`学习单元.html: expected ${learningUnitIds.length} quiz fieldsets, found ${quizFieldsetCount}`)
+}
+if (evidenceFieldsetCount !== learningUnitIds.length) {
+  errors.push(`学习单元.html: expected ${learningUnitIds.length} evidence fieldsets, found ${evidenceFieldsetCount}`)
+}
+if (quizRadioCount !== learningUnitIds.length * 4) {
+  errors.push(`学习单元.html: expected ${learningUnitIds.length * 4} quiz radios, found ${quizRadioCount}`)
+}
+if (evidenceCheckboxCount !== learningUnitIds.length * 3) {
+  errors.push(`学习单元.html: expected ${learningUnitIds.length * 3} evidence checkboxes, found ${evidenceCheckboxCount}`)
+}
+for (const [id, prerequisites] of prerequisitesById) {
+  const dependentPosition = learningUnitHtml.indexOf(`id="unit-${id}"`)
+  if (dependentPosition < 0) errors.push(`学习单元.html: missing rendered unit ${id}`)
+  for (const prerequisite of prerequisites) {
+    const prerequisitePosition = learningUnitHtml.indexOf(`id="unit-${prerequisite}"`)
+    if (prerequisitePosition > dependentPosition) {
+      errors.push(`学习单元.html: prerequisite ${prerequisite} renders after dependent ${id}`)
     }
   }
 }
@@ -319,6 +405,88 @@ for (const path of learningPaths) {
   if (!existsSync(join(repositoryRoot, path))) errors.push(`learningUnits.ts: missing source or test path ${path}`)
 }
 
+const masterySource = readFileSync(
+  join(repositoryRoot, 'docs', '.vitepress', 'data', 'masteryContent.ts'),
+  'utf8'
+)
+const masteryRevision = Number(masterySource.match(/export const masteryRevision = (\d+)/)?.[1])
+if (!Number.isInteger(masteryRevision) || masteryRevision <= 0) {
+  errors.push('masteryContent.ts: masteryRevision must be a positive integer')
+}
+const masteryMatches = [...masterySource.matchAll(/^\s{2}'([^']+)': \{/gm)]
+const masteryIds = masteryMatches.map((match) => match[1])
+if (masteryIds.length !== 22 || new Set(masteryIds).size !== 22) {
+  errors.push(`masteryContent.ts: expected 22 unique entries, found ${masteryIds.length}/${new Set(masteryIds).size}`)
+}
+for (const id of learningUnitIds) {
+  if (!masteryIds.includes(id)) errors.push(`masteryContent.ts: missing mastery content for ${id}`)
+}
+for (const id of masteryIds) {
+  if (!uniqueLearningUnitIds.has(id)) errors.push(`masteryContent.ts: unknown unit ${id}`)
+}
+for (let index = 0; index < masteryMatches.length; index += 1) {
+  const match = masteryMatches[index]
+  const id = match[1]
+  const start = match.index
+  const end = masteryMatches[index + 1]?.index ?? masterySource.lastIndexOf('\n}')
+  const block = masterySource.slice(start, end)
+  const question = block.match(/question: '([^']+)'/)?.[1]
+  const optionLine = block.match(/options: \[([^\r\n]+)\]/)?.[1] ?? ''
+  const options = [...optionLine.matchAll(/'([^']+)'/g)].map((option) => option[1])
+  const correctIndex = Number(block.match(/correctIndex: (\d+)/)?.[1])
+  const explanation = block.match(/explanation: '([^']+)'/)?.[1]
+  if (!question?.trim()) errors.push(`masteryContent.ts: empty question for ${id}`)
+  if (options.length !== 4 || new Set(options).size !== 4) {
+    errors.push(`masteryContent.ts: ${id} must have four unique options`)
+  }
+  if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= options.length) {
+    errors.push(`masteryContent.ts: invalid correctIndex for ${id}`)
+  }
+  if (!explanation?.trim()) errors.push(`masteryContent.ts: empty explanation for ${id}`)
+  const unitStart = learningUnitHtml.indexOf(`id="unit-${id}"`)
+  const unitEnd = unitStart >= 0 ? learningUnitHtml.indexOf('</li>', unitStart) : -1
+  const renderedUnit = unitStart >= 0 && unitEnd > unitStart
+    ? decodeHtml(learningUnitHtml.slice(unitStart, unitEnd))
+    : ''
+  for (const expectedText of [question, ...options].filter(Boolean)) {
+    if (!renderedUnit.includes(expectedText)) {
+      errors.push(`学习单元.html: ${id} is missing rendered mastery text ${expectedText}`)
+    }
+  }
+  for (const evidenceId of ['invariant', 'test', 'transfer']) {
+    const evidence = block.match(new RegExp(`\\b${evidenceId}: '([^']+)'`))?.[1]
+    if (!evidence?.trim()) errors.push(`masteryContent.ts: missing ${evidenceId} evidence for ${id}`)
+    else if (!renderedUnit.includes(evidence)) {
+      errors.push(`学习单元.html: ${id} is missing rendered ${evidenceId} evidence`)
+    }
+  }
+}
+
+const explorerSource = readFileSync(
+  join(repositoryRoot, 'docs', '.vitepress', 'theme', 'components', 'LearningUnitExplorer.vue'),
+  'utf8'
+)
+const reviewDays = [...(explorerSource.match(/const reviewIntervals = \[([^\]]+)\]\.map/)?.[1] ?? '').matchAll(/\d+/g)]
+  .map((match) => Number(match[0]))
+if (reviewDays.length < 2 || reviewDays.some((days) => days <= 0) || reviewDays.some((days, index) => index > 0 && days <= reviewDays[index - 1])) {
+  errors.push('LearningUnitExplorer.vue: review intervals must be strictly increasing positive days')
+}
+for (const sentinel of [
+  "dsa-learning-progress-v1",
+  "dsa-learning-progress-v2",
+  "'not-started'",
+  "'learning'",
+  "'verified'",
+  "'review'",
+  'topologicalOrder',
+  'selfTestRevision',
+  'evidenceRevision',
+  'record.selfTestPassedAt >= record.nextReviewAt',
+  'prerequisitesSatisfied(unit)'
+]) {
+  if (!explorerSource.includes(sentinel)) errors.push(`LearningUnitExplorer.vue: missing mastery sentinel ${sentinel}`)
+}
+
 if (errors.length) {
   console.error(`Site verification failed with ${errors.length} issue(s):`)
   for (const error of errors.slice(0, 80)) console.error(`- ${error}`)
@@ -326,4 +494,4 @@ if (errors.length) {
   process.exit(1)
 }
 
-console.log(`Verified ${htmlFiles.length} HTML pages, internal targets, metadata, module structure and six Trace assets.`)
+console.log(`Verified ${htmlFiles.length} HTML pages, internal targets, metadata, mastery data, module structure and six Trace assets.`)

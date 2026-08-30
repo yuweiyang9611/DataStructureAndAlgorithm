@@ -102,9 +102,10 @@ export default defineConfig({
       },
       {
         text: '主线课程',
-        link: '/CSharp数据结构与算法学习指导',
+        link: '/主线/',
         collapsed: false,
         items: [
+          { text: '主线路线总览', link: '/主线/' },
           { text: '项目知识地图', link: '/主线/知识地图' },
           { text: '环境与学习方法', link: '/主线/环境与学习方法' },
           { text: 'C# 最佳实践', link: '/主线/CSharp最佳实践' },
@@ -116,9 +117,10 @@ export default defineConfig({
       },
       {
         text: '进阶课程',
-        link: '/CSharp数据结构与算法进阶学习指导',
+        link: '/进阶/',
         collapsed: true,
         items: [
+          { text: '进阶路线总览', link: '/进阶/' },
           { text: '十八周计划与验收', link: '/进阶/十八周学习计划与验收' },
           { text: '核心数据结构', link: '/进阶/核心数据结构' },
           { text: '算法专题', link: '/进阶/算法专题' },
@@ -139,9 +141,10 @@ export default defineConfig({
       },
       {
         text: '综合项目',
-        link: '/综合项目实战学习指导',
+        link: '/综合项目/',
         collapsed: true,
         items: [
+          { text: '综合项目总览', link: '/综合项目/' },
           { text: '城市即时配送', link: '/综合项目/城市即时配送' },
           { text: '迷你搜索引擎', link: '/综合项目/迷你搜索引擎' },
           { text: '项目调度', link: '/综合项目/项目调度' },

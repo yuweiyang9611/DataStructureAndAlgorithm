@@ -81,13 +81,13 @@ hero:
     </div>
 
   <div class="learning-topic-grid">
-      <a class="learning-topic-card learning-topic-card--primary" href="./CSharp数据结构与算法学习指导.html">
+      <a class="learning-topic-card learning-topic-card--primary" href="./主线/">
         <span class="learning-card-label">FOUNDATION</span>
         <h3>数据结构与算法主线</h3>
         <p>从线性结构、排序和树出发，掌握字符串、图、动态规划与回溯。</p>
         <span class="learning-card-meta">8 个阶段 · 源码导读 · 验收清单</span>
       </a>
-      <a class="learning-topic-card" href="./CSharp数据结构与算法进阶学习指导.html">
+      <a class="learning-topic-card" href="./进阶/">
         <span class="learning-card-label">ADVANCED</span>
         <h3>进阶结构与工程方法</h3>
         <p>哈希、并查集、缓存、区间查询、高级图算法以及测试与性能证据。</p>
@@ -152,7 +152,7 @@ hero:
       </article>
     </div>
 
-  <a class="learning-text-link" href="./综合项目实战学习指导.html">进入综合项目路线 <span aria-hidden="true">→</span></a>
+  <a class="learning-text-link" href="./综合项目/">进入综合项目路线 <span aria-hidden="true">→</span></a>
   </section>
 
   <section class="learning-evidence" aria-labelledby="evidence-title">
@@ -178,7 +178,7 @@ hero:
       <p>读一段实现，手算一个最小例子，再用测试证明你的理解。</p>
     </div>
     <div class="learning-cta-actions">
-      <a class="learning-cta-primary" href="./CSharp数据结构与算法学习指导.html">开始主线学习</a>
+      <a class="learning-cta-primary" href="./主线/">开始主线学习</a>
       <a class="learning-cta-secondary" href="https://github.com/yuweiyang9611/DataStructureAndAlgorithm">查看 GitHub 源码</a>
     </div>
   </section>

@@ -327,9 +327,9 @@ export const learningUnits: LearningUnit[] = [
     prerequisites: ['advanced-ordered-trees', 'advanced-caching', 'advanced-hash-tables'],
     invariant: 'WAL 先于内存修改；Bloom 不得假阴性；缓存与概率结构都不是事实来源。',
     complexity: 'B+ 树点查/写入 O(logn)，范围扫描 O(logn+p)，LFU 平均 O(1)。',
-    sources: ['DataStructureAndAlgorithm.Scenarios.MiniStorage/MiniStorageEngine.cs', 'DataStructureAndAlgorithm.Scenarios.MiniStorage/WriteAheadLog.cs'],
-    tests: ['DataStructureAndAlgorithm.Test/IntegratedProjectsTest/MiniStorageEngineTests.cs', 'DataStructureAndAlgorithm.Test/IntegratedProjectsTest/MiniStorageWalModelTests.cs'],
-    testCommand: 'dotnet test DataStructureAndAlgorithm.Test/DataStructureAndAlgorithm.Test.csproj -c Release --filter "FullyQualifiedName~DataStructureAndAlgorithm.Test.IntegratedProjectsTest.MiniStorage"',
+    sources: ['DataStructureAndAlgorithm.Scenarios.MiniStorage/MiniStorageEngine.cs', 'DataStructureAndAlgorithm.Scenarios.MiniStorage/WriteAheadLog.cs', 'DataStructureAndAlgorithm/Tree/BPlusTree.cs', 'DataStructureAndAlgorithm/Probabilistic/StringBloomFilter.cs'],
+    tests: ['DataStructureAndAlgorithm.Test/IntegratedProjectsTest/MiniStorageEngineTests.cs', 'DataStructureAndAlgorithm.Test/IntegratedProjectsTest/MiniStorageWalModelTests.cs', 'DataStructureAndAlgorithm.Test/TreeTest/BPlusTreeTest.cs'],
+    testCommand: 'dotnet test DataStructureAndAlgorithm.Test/DataStructureAndAlgorithm.Test.csproj -c Release --filter "FullyQualifiedName~DataStructureAndAlgorithm.Test.IntegratedProjectsTest.MiniStorage|FullyQualifiedName~DataStructureAndAlgorithm.Test.TreeTest.BPlusTreeTest"',
     guide: '/综合项目/迷你存储引擎'
   }
 ]
