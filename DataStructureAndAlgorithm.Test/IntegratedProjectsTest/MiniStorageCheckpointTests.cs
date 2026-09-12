@@ -122,6 +122,7 @@ public sealed class MiniStorageCheckpointTests
             if (!process.HasExited) process.Kill(entireProcessTree: true);
             await process.WaitForExitAsync();
         }
+        await area.WaitForFileHandlesReleasedAsync();
         if (stageValue == (int)PersistenceStage.WalPartialWrite)
         {
             var bytes = File.ReadAllBytes(area.Path);
@@ -273,6 +274,29 @@ public sealed class MiniStorageCheckpointTests
         public StorageArea() { Directory.CreateDirectory(_directory); }
         public string Path => System.IO.Path.Combine(_directory, "data.wal");
         public MiniStorageOptions Options => new(WriteAheadLogPath: Path, CacheCapacity: 4);
+        public async Task WaitForFileHandlesReleasedAsync()
+        {
+            var timer = Stopwatch.StartNew();
+            while (true)
+            {
+                try
+                {
+                    foreach (var file in Directory.GetFiles(_directory))
+                    {
+                        using var probe = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.None);
+                    }
+                    return;
+                }
+                catch (IOException exception) when (OperatingSystem.IsWindows() &&
+                    (exception.HResult & 0xffff) is 32 or 33 && timer.Elapsed < TimeSpan.FromSeconds(2))
+                {
+                    // Process exit notifications can race Windows handle teardown and runner scans.
+                    // Wait for exclusive file access before asserting bytes or reopening the database.
+                    await Task.Delay(25);
+                }
+            }
+        }
+
         public void Dispose()
         {
             for (var attempt = 0; ; attempt++)
