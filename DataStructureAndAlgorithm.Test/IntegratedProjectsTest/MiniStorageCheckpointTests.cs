@@ -273,6 +273,23 @@ public sealed class MiniStorageCheckpointTests
         public StorageArea() { Directory.CreateDirectory(_directory); }
         public string Path => System.IO.Path.Combine(_directory, "data.wal");
         public MiniStorageOptions Options => new(WriteAheadLogPath: Path, CacheCapacity: 4);
-        public void Dispose() => Directory.Delete(_directory, recursive: true);
+        public void Dispose()
+        {
+            for (var attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    Directory.Delete(_directory, recursive: true);
+                    return;
+                }
+                catch (IOException exception) when (OperatingSystem.IsWindows() &&
+                    (exception.HResult & 0xffff) is 32 or 33 && attempt < 20)
+                {
+                    // Terminated processes and runner file scanners can briefly retain a sharing lock.
+                    // Retry only cleanup sharing violations; persistent locks still fail the test.
+                    System.Threading.Thread.Sleep(50);
+                }
+            }
+        }
     }
 }
