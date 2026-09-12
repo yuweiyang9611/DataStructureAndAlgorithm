@@ -9,6 +9,7 @@ const now = 1_700_000_000_000
 const expected = { generation: 0, deletedAt: 0 }
 
 test('mastery, fresh review qualification and 7/30/90 day schedule', () => {
+  assert.deepEqual(reviewIntervals, [7, 30, 90].map(days => days * 86_400_000))
   let store = emptyStore()
   store = applyAction(store, { type: 'start', id }, now)
   store = applyAction(store, { type: 'verify', id }, now)

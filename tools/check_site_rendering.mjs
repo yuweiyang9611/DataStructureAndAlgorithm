@@ -1,3 +1,4 @@
+import { reviewIntervals } from '../docs/.vitepress/data/progress.ts'
 import { learningUnits, stageLabels } from '../docs/.vitepress/data/learningUnits.ts'
 import { masteryByUnitId, masteryRevision, masteryEvidenceIds } from '../docs/.vitepress/data/masteryContent.ts'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
@@ -308,7 +309,7 @@ const uniqueLearningUnitIds = new Set(learningUnitIds)
 const prerequisitesById = new Map(learningUnits.map(unit => [unit.id, unit.prerequisites]))
 if (learningUnitIds.length !== 22 || uniqueLearningUnitIds.size !== 22) errors.push('Expected 22 unique learning units')
 for (const unit of learningUnits) {
-  if (!(unit.stage in stageLabels) || !['入门','进阶','高级','混合'].includes(unit.difficulty)) errors.push('Invalid unit classification: ' + unit.id)
+  if (!Object.hasOwn(stageLabels, unit.stage) || !['入门','进阶','高级','混合'].includes(unit.difficulty)) errors.push('Invalid unit classification: ' + unit.id)
   if (new Set(unit.prerequisites).size !== unit.prerequisites.length) errors.push('Duplicate prerequisites: ' + unit.id)
   for (const id of unit.prerequisites) if (!uniqueLearningUnitIds.has(id) || id === unit.id) errors.push('Invalid prerequisite: ' + id)
 }
@@ -365,7 +366,7 @@ for (const unit of learningUnits) {
   const content = masteryByUnitId[unit.id]
   if (!content) { errors.push('Missing mastery: '+unit.id); continue }
   const quiz = content.selfCheck
-  if (quiz.options.length !== 4 || new Set(quiz.options).size !== 4 || !Number.isInteger(quiz.correctIndex) || quiz.correctIndex < 0 || quiz.correctIndex > 3) errors.push('Invalid quiz: '+unit.id)
+  if (quiz.options.length !== 4 || new Set(quiz.options).size !== 4 || !Number.isInteger(quiz.correctIndex) || quiz.correctIndex < 0 || quiz.correctIndex > 3 || typeof quiz.explanation !== 'string' || !quiz.explanation.trim()) errors.push('Invalid quiz: '+unit.id)
   const start = learningUnitHtml.indexOf('id="unit-'+unit.id+'"')
   const end = learningUnitHtml.indexOf('</li>',start)
   const rendered = decodeHtml(learningUnitHtml.slice(start,end))
@@ -374,6 +375,8 @@ for (const unit of learningUnits) {
   }
 }
 if (!Number.isInteger(masteryRevision) || masteryRevision < 1 || Object.keys(masteryByUnitId).length !== learningUnits.length) errors.push('Invalid mastery data')
+
+if (reviewIntervals.length !== 3 || reviewIntervals.some((interval, index) => !Number.isFinite(interval) || interval <= 0 || (index > 0 && interval <= reviewIntervals[index - 1]))) errors.push('Invalid review intervals')
 
 if (errors.length) {
   console.error(`Site verification failed with ${errors.length} issue(s):`)
