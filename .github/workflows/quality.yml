@@ -42,6 +42,7 @@ jobs:
           --no-build
           --results-directory TestResults
           --collect "XPlat Code Coverage"
+          --settings coverage.runsettings
 
       - name: Enforce coverage thresholds
         shell: pwsh

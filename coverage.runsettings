@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings><DataCollectors><DataCollector friendlyName="XPlat Code Coverage">
+    <Configuration>
+      <Format>cobertura</Format>
+      <Include>[DataStructureAndAlgorithm]*,[DataStructureAndAlgorithm.Scenarios.*]*</Include>
+      <ExcludeByFile>**/Program.cs</ExcludeByFile>
+    </Configuration>
+  </DataCollector></DataCollectors></DataCollectionRunSettings>
+</RunSettings>

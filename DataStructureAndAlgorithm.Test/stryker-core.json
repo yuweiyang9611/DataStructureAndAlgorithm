@@ -1,0 +1,28 @@
+{
+  "stryker-config": {
+    "project": "DataStructureAndAlgorithm.csproj",
+    "configuration": "Release",
+    "target-framework": "net10.0",
+    "mutation-level": "Basic",
+    "concurrency": 4,
+    "mutate": [
+      "**/Tree/BPlusTree.cs",
+      "**/Range/LazyRangeAddMaxSegmentTree.cs",
+      "**/Tree/BkTree.cs",
+      "**/Probabilistic/StringBloomFilter.cs",
+      "**/Caching/LfuCache.cs",
+      "**/Graph/MinCostFlowAlgorithms.cs"
+    ],
+    "reporters": [
+      "progress",
+      "html",
+      "markdown",
+      "json"
+    ],
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 60
+    }
+  }
+}

@@ -1,9 +1,6 @@
 <Project>
   <PropertyGroup>
-    <!--
-      TreatWarningsAsErrors 继续约束编译器与可空警告；既有教学 API 的 CA 命名/设计建议先保留为可见警告，
-      避免为了“一次清零”破坏公开类型名称。后续可在不兼容版本中逐类治理。
-    -->
-    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+    <!-- .editorconfig explicitly selects six reliability rules; each is a build gate. -->
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
   </PropertyGroup>
 </Project>

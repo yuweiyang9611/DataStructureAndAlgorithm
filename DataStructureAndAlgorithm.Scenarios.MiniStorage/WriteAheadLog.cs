@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DataStructureAndAlgorithm.Scenarios.MiniStorage;
 
@@ -16,10 +17,10 @@ namespace DataStructureAndAlgorithm.Scenarios.MiniStorage;
 internal sealed class WriteAheadLog : IDisposable
 {
     private readonly FileStream _stream;
-    private readonly StreamWriter _writer;
+    private readonly IPersistenceFaults? _faults;
     private bool _disposed;
 
-    public WriteAheadLog(string path)
+    public WriteAheadLog(string path, IPersistenceFaults? faults = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         var fullPath = Path.GetFullPath(path);
@@ -29,11 +30,9 @@ internal sealed class WriteAheadLog : IDisposable
             Directory.CreateDirectory(directory);
         }
 
-        _stream = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
-        _writer = new StreamWriter(_stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
-        {
-            AutoFlush = true
-        };
+        _stream = new FileStream(fullPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+        _stream.Position = _stream.Length;
+        _faults = faults;
     }
 
     public static IEnumerable<WalRecord> ReadAll(string path)
@@ -65,7 +64,7 @@ internal sealed class WriteAheadLog : IDisposable
             WalRecord? record;
             try
             {
-                record = JsonSerializer.Deserialize<WalRecord>(line);
+                record = PersistenceCodec.Decode<WalRecord>(line, allowLegacy: true);
             }
             catch (JsonException exception)
             {
@@ -74,7 +73,8 @@ internal sealed class WriteAheadLog : IDisposable
 
             if (record is null || record.Sequence < 1 || string.IsNullOrWhiteSpace(record.Key) ||
                 record.Operation is not (WalOperation.Put or WalOperation.Delete) ||
-                record.Operation == WalOperation.Put && record.Value is null)
+                record.Operation == WalOperation.Put && record.Value is null ||
+                record.Operation == WalOperation.Delete && record.Value is not null)
             {
                 throw new InvalidDataException($"WAL 第 {lineNumber} 行缺少有效操作字段。");
             }
@@ -146,11 +146,25 @@ internal sealed class WriteAheadLog : IDisposable
     public void Append(WalRecord record)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        var line = JsonSerializer.Serialize(record);
-        _writer.WriteLine(line);
-        // AutoFlush 会刷新 StreamWriter 与底层 FileStream；教学实现以可靠语义优先，不做批量刷盘优化。
-        _writer.Flush();
+        var bytes = Encoding.UTF8.GetBytes(PersistenceCodec.Encode(record) + "\n");
+        var half = bytes.Length / 2;
+        _stream.Write(bytes.AsSpan(0, half));
+        // Fault tests must leave a real partial record even when the stream buffers small writes.
+        if (_faults is not null) _stream.Flush(flushToDisk: true);
+        _faults?.At(PersistenceStage.WalPartialWrite);
+        _stream.Write(bytes.AsSpan(half));
         _stream.Flush(flushToDisk: true);
+        _faults?.At(PersistenceStage.WalFlushed);
+    }
+
+    public long Length => _stream.Length;
+
+    public void Truncate()
+    {
+        _stream.SetLength(0);
+        _stream.Position = 0;
+        _stream.Flush(flushToDisk: true);
+        _faults?.At(PersistenceStage.WalTruncated);
     }
 
     public void Dispose()
@@ -160,7 +174,6 @@ internal sealed class WriteAheadLog : IDisposable
             return;
         }
 
-        _writer.Dispose();
         _stream.Dispose();
         _disposed = true;
     }
@@ -172,4 +185,8 @@ internal enum WalOperation
     Delete
 }
 
-internal sealed record WalRecord(long Sequence, WalOperation Operation, string Key, string? Value);
+internal sealed record WalRecord(
+    [property: JsonRequired] long Sequence,
+    [property: JsonRequired] WalOperation Operation,
+    [property: JsonRequired] string Key,
+    [property: JsonRequired] string? Value);

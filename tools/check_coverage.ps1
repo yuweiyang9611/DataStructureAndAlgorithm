@@ -10,7 +10,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$reports = Get-ChildItem -Path $Report -File -Recurse -ErrorAction Stop
+$reports = Get-ChildItem -Path $Report -Filter coverage.cobertura.xml -File -Recurse -ErrorAction Stop
 if ($reports.Count -ne 1) {
     throw "Expected exactly one Cobertura report under '$Report', found $($reports.Count)."
 }

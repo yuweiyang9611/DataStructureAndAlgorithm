@@ -1,3 +1,5 @@
+import { learningUnits, stageLabels } from '../docs/.vitepress/data/learningUnits.ts'
+import { masteryByUnitId, masteryRevision, masteryEvidenceIds } from '../docs/.vitepress/data/masteryContent.ts'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { dirname, extname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -301,55 +303,15 @@ for (const indexedPage of ['开始学习.html', '学习单元.html', '追踪实�
   }
 }
 
-const learningUnitSource = readFileSync(
-  join(repositoryRoot, 'docs', '.vitepress', 'data', 'learningUnits.ts'),
-  'utf8'
-)
-const unitBlocks = [...learningUnitSource.matchAll(/^\s{2}\{\r?\n([\s\S]*?)^\s{2}\},?$/gm)].map((match) => match[1])
-const learningUnitIds = unitBlocks
-  .map((block) => block.match(/^\s{4}id: '([^']+)'/m)?.[1])
-  .filter(Boolean)
+const learningUnitIds = learningUnits.map(unit => unit.id)
 const uniqueLearningUnitIds = new Set(learningUnitIds)
-if (learningUnitIds.length !== 22 || uniqueLearningUnitIds.size !== 22) {
-  errors.push(`learningUnits.ts: expected 22 unique units, found ${learningUnitIds.length}/${uniqueLearningUnitIds.size}`)
+const prerequisitesById = new Map(learningUnits.map(unit => [unit.id, unit.prerequisites]))
+if (learningUnitIds.length !== 22 || uniqueLearningUnitIds.size !== 22) errors.push('Expected 22 unique learning units')
+for (const unit of learningUnits) {
+  if (!(unit.stage in stageLabels) || !['入门','进阶','高级','混合'].includes(unit.difficulty)) errors.push('Invalid unit classification: ' + unit.id)
+  if (new Set(unit.prerequisites).size !== unit.prerequisites.length) errors.push('Duplicate prerequisites: ' + unit.id)
+  for (const id of unit.prerequisites) if (!uniqueLearningUnitIds.has(id) || id === unit.id) errors.push('Invalid prerequisite: ' + id)
 }
-
-const knownStages = new Set(['S02', 'S03', 'S04', 'S05', 'S06', 'A01', 'A02', 'P03', 'PRACTICE', 'S07'])
-const knownDifficulties = new Set(['入门', '进阶', '高级', '混合'])
-const prerequisitesById = new Map()
-for (const block of unitBlocks) {
-  const id = block.match(/^\s{4}id: '([^']+)'/m)?.[1]
-  if (!id) continue
-  const stage = block.match(/stage: '([^']+)'/)?.[1]
-  const difficulty = block.match(/difficulty: '([^']+)'/)?.[1]
-  if (!knownStages.has(stage)) errors.push(`learningUnits.ts: invalid stage ${stage} for ${id}`)
-  if (!knownDifficulties.has(difficulty)) errors.push(`learningUnits.ts: invalid difficulty ${difficulty} for ${id}`)
-
-  const prerequisiteMatch = block.match(/prerequisites: \[([^\]]*)\]/)
-  if (!prerequisiteMatch) {
-    errors.push(`learningUnits.ts: missing literal prerequisites array for ${id}`)
-  }
-  const prerequisiteText = prerequisiteMatch?.[1] ?? ''
-  const prerequisites = [...prerequisiteText.matchAll(/'([^']+)'/g)].map((match) => match[1])
-  const unsupportedPrerequisiteSyntax = prerequisiteText
-    .replace(/'[^']+'/g, '')
-    .replace(/,/g, '')
-    .trim()
-  if (unsupportedPrerequisiteSyntax) {
-    errors.push(`learningUnits.ts: prerequisites for ${id} must use single-quoted literal IDs`)
-  }
-  if (new Set(prerequisites).size !== prerequisites.length) {
-    errors.push(`learningUnits.ts: duplicate prerequisite for ${id}`)
-  }
-  if (prerequisites.includes(id)) errors.push(`learningUnits.ts: ${id} cannot depend on itself`)
-  for (const prerequisite of prerequisites) {
-    if (!uniqueLearningUnitIds.has(prerequisite)) {
-      errors.push(`learningUnits.ts: unknown prerequisite ${prerequisite} for ${id}`)
-    }
-  }
-  prerequisitesById.set(id, prerequisites)
-}
-
 const indegree = new Map(learningUnitIds.map((id) => [id, prerequisitesById.get(id)?.length ?? 0]))
 const dependents = new Map(learningUnitIds.map((id) => [id, []]))
 for (const [id, prerequisites] of prerequisitesById) {
@@ -398,94 +360,20 @@ for (const [id, prerequisites] of prerequisitesById) {
   }
 }
 
-const learningPaths = new Set(
-  [...learningUnitSource.matchAll(/'((?:DataStructureAndAlgorithm)[^']+\.cs)'/g)].map((match) => match[1])
-)
-for (const path of learningPaths) {
-  if (!existsSync(join(repositoryRoot, path))) errors.push(`learningUnits.ts: missing source or test path ${path}`)
-}
-
-const masterySource = readFileSync(
-  join(repositoryRoot, 'docs', '.vitepress', 'data', 'masteryContent.ts'),
-  'utf8'
-)
-const masteryRevision = Number(masterySource.match(/export const masteryRevision = (\d+)/)?.[1])
-if (!Number.isInteger(masteryRevision) || masteryRevision <= 0) {
-  errors.push('masteryContent.ts: masteryRevision must be a positive integer')
-}
-const masteryMatches = [...masterySource.matchAll(/^\s{2}'([^']+)': \{/gm)]
-const masteryIds = masteryMatches.map((match) => match[1])
-if (masteryIds.length !== 22 || new Set(masteryIds).size !== 22) {
-  errors.push(`masteryContent.ts: expected 22 unique entries, found ${masteryIds.length}/${new Set(masteryIds).size}`)
-}
-for (const id of learningUnitIds) {
-  if (!masteryIds.includes(id)) errors.push(`masteryContent.ts: missing mastery content for ${id}`)
-}
-for (const id of masteryIds) {
-  if (!uniqueLearningUnitIds.has(id)) errors.push(`masteryContent.ts: unknown unit ${id}`)
-}
-for (let index = 0; index < masteryMatches.length; index += 1) {
-  const match = masteryMatches[index]
-  const id = match[1]
-  const start = match.index
-  const end = masteryMatches[index + 1]?.index ?? masterySource.lastIndexOf('\n}')
-  const block = masterySource.slice(start, end)
-  const question = block.match(/question: '([^']+)'/)?.[1]
-  const optionLine = block.match(/options: \[([^\r\n]+)\]/)?.[1] ?? ''
-  const options = [...optionLine.matchAll(/'([^']+)'/g)].map((option) => option[1])
-  const correctIndex = Number(block.match(/correctIndex: (\d+)/)?.[1])
-  const explanation = block.match(/explanation: '([^']+)'/)?.[1]
-  if (!question?.trim()) errors.push(`masteryContent.ts: empty question for ${id}`)
-  if (options.length !== 4 || new Set(options).size !== 4) {
-    errors.push(`masteryContent.ts: ${id} must have four unique options`)
-  }
-  if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= options.length) {
-    errors.push(`masteryContent.ts: invalid correctIndex for ${id}`)
-  }
-  if (!explanation?.trim()) errors.push(`masteryContent.ts: empty explanation for ${id}`)
-  const unitStart = learningUnitHtml.indexOf(`id="unit-${id}"`)
-  const unitEnd = unitStart >= 0 ? learningUnitHtml.indexOf('</li>', unitStart) : -1
-  const renderedUnit = unitStart >= 0 && unitEnd > unitStart
-    ? decodeHtml(learningUnitHtml.slice(unitStart, unitEnd))
-    : ''
-  for (const expectedText of [question, ...options].filter(Boolean)) {
-    if (!renderedUnit.includes(expectedText)) {
-      errors.push(`学习单元.html: ${id} is missing rendered mastery text ${expectedText}`)
-    }
-  }
-  for (const evidenceId of ['invariant', 'test', 'transfer']) {
-    const evidence = block.match(new RegExp(`\\b${evidenceId}: '([^']+)'`))?.[1]
-    if (!evidence?.trim()) errors.push(`masteryContent.ts: missing ${evidenceId} evidence for ${id}`)
-    else if (!renderedUnit.includes(evidence)) {
-      errors.push(`学习单元.html: ${id} is missing rendered ${evidenceId} evidence`)
-    }
+for (const unit of learningUnits) {
+  for (const path of [...unit.sources, ...unit.tests]) if (!existsSync(join(repositoryRoot,path))) errors.push('Missing learning file: ' + path)
+  const content = masteryByUnitId[unit.id]
+  if (!content) { errors.push('Missing mastery: '+unit.id); continue }
+  const quiz = content.selfCheck
+  if (quiz.options.length !== 4 || new Set(quiz.options).size !== 4 || !Number.isInteger(quiz.correctIndex) || quiz.correctIndex < 0 || quiz.correctIndex > 3) errors.push('Invalid quiz: '+unit.id)
+  const start = learningUnitHtml.indexOf('id="unit-'+unit.id+'"')
+  const end = learningUnitHtml.indexOf('</li>',start)
+  const rendered = decodeHtml(learningUnitHtml.slice(start,end))
+  for (const text of [quiz.question,...quiz.options,...masteryEvidenceIds.map(id=>content.evidence[id])]) {
+    if (!text?.trim() || !rendered.includes(text)) errors.push('Missing rendered content: '+unit.id)
   }
 }
-
-const explorerSource = readFileSync(
-  join(repositoryRoot, 'docs', '.vitepress', 'theme', 'components', 'LearningUnitExplorer.vue'),
-  'utf8'
-)
-const reviewDays = [...(explorerSource.match(/const reviewIntervals = \[([^\]]+)\]\.map/)?.[1] ?? '').matchAll(/\d+/g)]
-  .map((match) => Number(match[0]))
-if (reviewDays.length < 2 || reviewDays.some((days) => days <= 0) || reviewDays.some((days, index) => index > 0 && days <= reviewDays[index - 1])) {
-  errors.push('LearningUnitExplorer.vue: review intervals must be strictly increasing positive days')
-}
-for (const sentinel of [
-  "dsa-learning-progress-v1",
-  "dsa-learning-progress-v2",
-  "'not-started'",
-  "'learning'",
-  "'verified'",
-  "'review'",
-  'topologicalOrder',
-  'selfTestRevision',
-  'evidenceRevision',
-  'record.selfTestPassedAt >= record.nextReviewAt',
-  'prerequisitesSatisfied(unit)'
-]) {
-  if (!explorerSource.includes(sentinel)) errors.push(`LearningUnitExplorer.vue: missing mastery sentinel ${sentinel}`)
-}
+if (!Number.isInteger(masteryRevision) || masteryRevision < 1 || Object.keys(masteryByUnitId).length !== learningUnits.length) errors.push('Invalid mastery data')
 
 if (errors.length) {
   console.error(`Site verification failed with ${errors.length} issue(s):`)

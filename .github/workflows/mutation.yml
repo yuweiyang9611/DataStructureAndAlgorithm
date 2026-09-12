@@ -1,42 +1,35 @@
 name: Mutation testing
-
 on:
   workflow_dispatch:
   schedule:
-    # 变异测试比普通单元测试慢得多，每周运行即可；需要时也可以手动触发。
     - cron: "17 18 * * 6"
-
 permissions:
   contents: read
-
 jobs:
   mutation-test:
-    name: Test whether critical tests can detect injected bugs
+    strategy:
+      fail-fast: false
+      matrix:
+        scope: [core, delivery, search, scheduling, storage]
+    name: Mutation / ${{ matrix.scope }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-
+    timeout-minutes: 60
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Install .NET 10 SDK
-        uses: actions/setup-dotnet@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
-
-      - name: Restore dependencies and local tools
+      - name: Restore and build test subprocess
         run: |
           dotnet restore DataStructureAndAlgorithm.slnx
           dotnet tool restore
-
-      - name: Run scoped mutation testing
+          dotnet build DataStructureAndAlgorithm.slnx -c Release --no-restore
+      - name: Mutation gate
         working-directory: DataStructureAndAlgorithm.Test
-        run: dotnet stryker
-
-      - name: Upload mutation report
+        run: dotnet stryker --config-file stryker-${{ matrix.scope }}.json
+      - uses: actions/upload-artifact@v7
         if: always()
-        uses: actions/upload-artifact@v7
         with:
-          name: mutation-report
+          name: mutation-${{ matrix.scope }}
           path: DataStructureAndAlgorithm.Test/StrykerOutput
           if-no-files-found: warn

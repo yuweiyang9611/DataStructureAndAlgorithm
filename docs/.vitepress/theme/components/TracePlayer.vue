@@ -208,7 +208,10 @@ async function loadTrace(id: string) {
   }
 }
 
-onMounted(async () => {
+async function loadManifest() {
+  manifestRequest?.abort()
+  loading.value = true
+  error.value = ''
   manifestRequest = new AbortController()
   try {
     const response = await fetch(withBase('/traces/manifest.json'), { signal: manifestRequest.signal })
@@ -230,7 +233,12 @@ onMounted(async () => {
     error.value = cause instanceof Error ? `Trace 清单加载失败：${cause.message}` : 'Trace 清单加载失败。'
     loading.value = false
   }
-})
+}
+async function retry() {
+  if (manifest.value && selectedId.value) await loadTrace(selectedId.value)
+  else await loadManifest()
+}
+onMounted(loadManifest)
 
 watch(selectedId, (id, oldId) => {
   if (oldId && id !== oldId) void loadTrace(id)
@@ -283,7 +291,7 @@ onBeforeUnmount(() => {
     </div>
 
     <p v-if="loading" class="trace-message" aria-live="polite">正在加载 Trace…</p>
-    <p v-else-if="error" class="trace-message trace-error" role="alert">{{ error }}</p>
+    <div v-else-if="error" class="trace-message trace-error" role="alert">{{ error }} <button type="button" @click="retry">重新加载</button></div>
 
     <template v-else-if="currentEvent">
       <div class="trace-controls">

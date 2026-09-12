@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRaw } from 'vue'
 import { withBase } from 'vitepress'
 import {
   masteryByUnitId,
@@ -9,40 +9,16 @@ import {
 } from '../../data/masteryContent'
 import { learningUnits, repository, stageLabels, type LearningUnit } from '../../data/learningUnits'
 
-type UnitStatus = 'not-started' | 'learning' | 'verified' | 'review'
+import { emptyStore, applyAction, statusOf as progressStatus, canVerify as progressCanVerify, canReview as progressCanReview, migrateLegacy, parseBackup, exportBackup, mergeBackup, type ProgressAction, type ImportData } from '../../data/progress.ts'
+import { parseBackupJson } from '../../data/backupJson.ts'
+import { ProgressRepository, StaleProgressError } from '../../data/progressRepository.ts'
 type QuizFeedback = 'correct' | 'incorrect' | 'missing'
-
-interface UnitProgress {
-  evidenceIds: MasteryEvidenceId[]
-  evidenceRevision?: number
-  selfTestPassedAt?: number
-  selfTestRevision?: number
-  verifiedAt?: number
-  nextReviewAt?: number
-  lastReviewedAt?: number
-  reviewRound: number
-  verifiedRevision?: number
-  legacyCompleted?: true
-  startedAt: number
-  updatedAt: number
-}
-
-interface ProgressStore {
-  schemaVersion: 2
-  migratedFromV1: boolean
-  units: Record<string, UnitProgress>
-}
-
-const legacyStorageKey = 'dsa-learning-progress-v1'
-const storageKey = 'dsa-learning-progress-v2'
-const reviewIntervals = [7, 30, 90].map((days) => days * 24 * 60 * 60 * 1000)
 const stageOrder = new Map(
   ['S02', 'S03', 'S04', 'A01', 'S05', 'S06', 'A02', 'P03', 'PRACTICE', 'S07']
     .map((key, index) => [key, index])
 )
 const originalOrder = new Map(learningUnits.map((unit, index) => [unit.id, index]))
 const unitById = new Map(learningUnits.map((unit) => [unit.id, unit]))
-const validIds = new Set(unitById.keys())
 
 function compareUnits(left: LearningUnit, right: LearningUnit) {
   const stageDifference = (stageOrder.get(left.stage) ?? 99) - (stageOrder.get(right.stage) ?? 99)
@@ -81,7 +57,7 @@ const query = ref('')
 const stage = ref('all')
 const difficulty = ref('all')
 const statusFilter = ref('all')
-const progressStore = ref<ProgressStore>({ schemaVersion: 2, migratedFromV1: false, units: {} })
+const progressStore = ref(emptyStore())
 const hydrated = ref(false)
 const now = ref(Date.now())
 const copiedId = ref('')
@@ -95,131 +71,85 @@ let clockTimer: number | undefined
 let resetTimer: number | undefined
 let copyTimer: number | undefined
 
-function isTimestamp(value: unknown): value is number {
-  return typeof value === 'number' &&
-    Number.isFinite(value) &&
-    value > 0 &&
-    value <= 8_640_000_000_000_000 &&
-    Number.isFinite(new Date(value).getTime())
-}
+let repositoryStore: ProgressRepository | undefined
+let channel: BroadcastChannel | undefined
+let disposed = false
+let queue = Promise.resolve()
+let queuedOperations = 0
+const pending = ref(false)
+const notice = ref('')
+const importData = ref<ImportData | null>(null)
+const importPreview = computed(() => importData.value ? mergeBackup(toRaw(progressStore.value), toRaw(importData.value)).counts : null)
+let previewRevision = 0
 
-function normalizeRecord(value: unknown): UnitProgress | null {
-  if (!value || typeof value !== 'object') return null
-  const candidate = value as Partial<UnitProgress>
-  const evidenceIds = Array.isArray(candidate.evidenceIds)
-    ? [...new Set(candidate.evidenceIds.filter(
-      (id): id is MasteryEvidenceId =>
-        typeof id === 'string' && (masteryEvidenceIds as readonly string[]).includes(id)
-    ))]
-    : []
-  const timestamp = Date.now()
-  const record: UnitProgress = {
-    evidenceIds,
-    reviewRound: Number.isInteger(candidate.reviewRound)
-      ? Math.min(reviewIntervals.length - 1, Math.max(0, Number(candidate.reviewRound)))
-      : 0,
-    startedAt: isTimestamp(candidate.startedAt) ? candidate.startedAt : timestamp,
-    updatedAt: isTimestamp(candidate.updatedAt) ? candidate.updatedAt : timestamp
-  }
-  if (isTimestamp(candidate.selfTestPassedAt)) record.selfTestPassedAt = candidate.selfTestPassedAt
-  if (Number.isInteger(candidate.selfTestRevision) && Number(candidate.selfTestRevision) > 0) {
-    record.selfTestRevision = Number(candidate.selfTestRevision)
-  }
-  if (Number.isInteger(candidate.evidenceRevision) && Number(candidate.evidenceRevision) > 0) {
-    record.evidenceRevision = Number(candidate.evidenceRevision)
-  }
-  if (isTimestamp(candidate.verifiedAt)) record.verifiedAt = candidate.verifiedAt
-  if (isTimestamp(candidate.nextReviewAt)) record.nextReviewAt = candidate.nextReviewAt
-  if (isTimestamp(candidate.lastReviewedAt)) record.lastReviewedAt = candidate.lastReviewedAt
-  if (Number.isInteger(candidate.verifiedRevision) && Number(candidate.verifiedRevision) > 0) {
-    record.verifiedRevision = Number(candidate.verifiedRevision)
-  }
-  if (candidate.legacyCompleted === true) record.legacyCompleted = true
-  return record
+function accept(store: ReturnType<typeof emptyStore>) {
+  if (!disposed && store.revision >= progressStore.value.revision) progressStore.value = store
 }
-
-function normalizeStore(value: unknown): ProgressStore | null {
-  if (!value || typeof value !== 'object') return null
-  const candidate = value as Partial<ProgressStore>
-  if (candidate.schemaVersion !== 2 || !candidate.units || typeof candidate.units !== 'object') return null
-  const units: Record<string, UnitProgress> = {}
-  for (const [id, value] of Object.entries(candidate.units)) {
-    if (!validIds.has(id)) continue
-    const record = normalizeRecord(value)
-    if (record) units[id] = record
-  }
-  return {
-    schemaVersion: 2,
-    migratedFromV1: candidate.migratedFromV1 === true,
-    units
-  }
+async function refresh() {
+  if (!repositoryStore || storageError.value || pending.value) return
+  try { accept(await repositoryStore.read()) } catch { storageError.value = true }
 }
-
-function migrateLegacy(): ProgressStore {
-  const units: Record<string, UnitProgress> = {}
-  let migrated = false
-  try {
-    const raw = localStorage.getItem(legacyStorageKey)
-    if (raw !== null) {
-      migrated = true
-      const ids = JSON.parse(raw)
-      if (Array.isArray(ids)) {
-        const timestamp = Date.now()
-        for (const id of new Set(ids.filter((value): value is string => typeof value === 'string' && validIds.has(value)))) {
-          units[id] = {
-            evidenceIds: [],
-            reviewRound: 0,
-            legacyCompleted: true,
-            startedAt: timestamp,
-            updatedAt: timestamp
-          }
-        }
-        migrationNotice.value = Object.keys(units).length > 0
+function dispatch(action: ProgressAction) {
+  const expected = { generation: progressStore.value.generation, deletedAt: 'id' in action ? progressStore.value.deleted[action.id] ?? 0 : 0 }
+  queuedOperations++
+  pending.value = true
+  queue = queue.then(async () => {
+    if (!hydrated.value || disposed) return
+    try {
+      const store = repositoryStore && !storageError.value
+        ? await repositoryStore.dispatch(action, expected, Date.now())
+        : applyAction(toRaw(progressStore.value), action, Date.now())
+      accept(store)
+      channel?.postMessage('changed')
+      now.value = Date.now()
+    } catch (error) {
+      if (error instanceof StaleProgressError) {
+        notice.value = error.message
+        if (repositoryStore) accept(await repositoryStore.read())
+      } else {
+        storageError.value = true
+        accept(applyAction(toRaw(progressStore.value), action, Date.now()))
       }
     }
-  } catch {
-    // 旧数据损坏时从空的 v2 状态开始；页面仍应可用。
-  }
-  return { schemaVersion: 2, migratedFromV1: migrated, units }
+  }).catch(error => { notice.value = String(error) }).finally(() => { queuedOperations--; pending.value = queuedOperations > 0; if (!pending.value) void refresh() })
 }
+function statusOf(id: string) { return progressStatus(progressStore.value.units[id], now.value) }
 
-function persistProgress() {
-  if (!hydrated.value) return
+function exportProgress() {
+  const blob = new Blob([JSON.stringify(exportBackup(toRaw(progressStore.value)), null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url; link.download = 'learning-progress-v3.json'; link.click()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+async function previewImport(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  importData.value = null; notice.value = ''
+  if (!file) return
   try {
-    localStorage.setItem(storageKey, JSON.stringify(progressStore.value))
-    storageError.value = false
-  } catch {
-    storageError.value = true
-  }
+    if (file.size > 1_000_000) throw new Error('备份文件不能超过 1 MB。')
+    importData.value = parseBackup(parseBackupJson(await file.text()))
+    previewRevision = progressStore.value.revision
+  } catch (error) { notice.value = error instanceof Error ? error.message : '备份读取失败。' }
+  input.value = ''
 }
-
-function baseRecord(existing?: UnitProgress): UnitProgress {
-  const timestamp = Date.now()
-  return existing
-    ? { ...existing, evidenceIds: [...existing.evidenceIds] }
-    : { evidenceIds: [], reviewRound: 0, startedAt: timestamp, updatedAt: timestamp }
-}
-
-function updateUnit(id: string, update: (record: UnitProgress) => UnitProgress) {
-  const nextRecord = update(baseRecord(progressStore.value.units[id]))
-  progressStore.value = {
-    ...progressStore.value,
-    units: { ...progressStore.value.units, [id]: nextRecord }
-  }
-}
-
-function statusOf(id: string): UnitStatus {
-  const record = progressStore.value.units[id]
-  if (!record) return 'not-started'
-  if (
-    !record.verifiedAt ||
-    record.verifiedRevision !== masteryRevision ||
-    record.selfTestRevision !== masteryRevision ||
-    !record.selfTestPassedAt ||
-    !evidenceComplete(id)
-  ) return 'learning'
-  if (record.nextReviewAt && record.nextReviewAt <= now.value) return 'review'
-  return 'verified'
+async function confirmImport() {
+  if (!importData.value || pending.value) return
+  pending.value = true
+  try {
+    if (progressStore.value.revision !== previewRevision) throw new StaleProgressError()
+    const data = toRaw(importData.value)
+    const merged = repositoryStore && !storageError.value
+      ? await repositoryStore.import(data, previewRevision)
+      : mergeBackup(toRaw(progressStore.value), data).store
+    accept(merged); importData.value = null; channel?.postMessage('changed')
+    notice.value = storageError.value ? '已合并到本次页面，尚未持久化，请导出备份。' : '备份已合并并保存。'
+  } catch (error) {
+    notice.value = error instanceof Error ? error.message : '导入未保存。'
+    importData.value = null
+    if (error instanceof StaleProgressError && repositoryStore) accept(await repositoryStore.read())
+  } finally { pending.value = false }
 }
 
 function statusLabel(id: string) {
@@ -292,136 +222,30 @@ function evidenceComplete(id: string) {
   return masteryEvidenceIds.every((evidenceId) => evidenceChecked(id, evidenceId))
 }
 
-function startUnit(id: string) {
-  if (progressStore.value.units[id]) return
-  updateUnit(id, (record) => record)
-}
-
+function startUnit(id: string) { dispatch({ type: 'start', id }) }
 function handleMasteryToggle(id: string, event: Event) {
-  if ((event.target as HTMLDetailsElement).open) startUnit(id)
+  if ((event.target as HTMLDetailsElement).open && !progressStore.value.units[id]) startUnit(id)
 }
-
-function toggleEvidence(id: string, evidenceId: string, event: Event) {
-  const checked = (event.target as HTMLInputElement).checked
-  if (!(masteryEvidenceIds as readonly string[]).includes(evidenceId)) return
-  updateUnit(id, (record) => {
-    const evidence = new Set(record.evidenceRevision === masteryRevision ? record.evidenceIds : [])
-    if (checked) evidence.add(evidenceId as MasteryEvidenceId)
-    else evidence.delete(evidenceId as MasteryEvidenceId)
-    return {
-      ...record,
-      evidenceIds: [...evidence],
-      evidenceRevision: masteryRevision,
-      updatedAt: Date.now()
-    }
-  })
+function toggleEvidence(id: string, evidenceId: MasteryEvidenceId, event: Event) {
+  dispatch({ type: 'evidence', id, evidenceId, checked: (event.target as HTMLInputElement).checked })
 }
-
-function clearSelfTestQualification(id: string) {
-  updateUnit(id, (record) => {
-    const { selfTestPassedAt: _passedAt, selfTestRevision: _revision, ...rest } = record
-    return { ...rest, updatedAt: Date.now() }
-  })
-}
-
 function handleQuizChoice(id: string) {
   quizFeedback.value = { ...quizFeedback.value, [id]: undefined }
-  const status = statusOf(id)
-  if (status === 'learning' || status === 'review') clearSelfTestQualification(id)
+  dispatch({ type: 'clear-answer', id })
 }
-
 function submitSelfCheck(unit: LearningUnit) {
   const selected = quizAnswers.value[unit.id]
-  if (selected === undefined) {
-    quizFeedback.value = { ...quizFeedback.value, [unit.id]: 'missing' }
-    return
-  }
-  startUnit(unit.id)
-  if (selected === mastery(unit).selfCheck.correctIndex) {
-    const timestamp = Date.now()
-    updateUnit(unit.id, (record) => ({
-      ...record,
-      selfTestPassedAt: timestamp,
-      selfTestRevision: masteryRevision,
-      updatedAt: timestamp
-    }))
-    quizFeedback.value = { ...quizFeedback.value, [unit.id]: 'correct' }
-  } else {
-    if (statusOf(unit.id) === 'learning' || statusOf(unit.id) === 'review') {
-      clearSelfTestQualification(unit.id)
-    }
-    quizFeedback.value = { ...quizFeedback.value, [unit.id]: 'incorrect' }
-  }
+  if (selected === undefined) { quizFeedback.value[unit.id] = 'missing'; return }
+  const correct = selected === mastery(unit).selfCheck.correctIndex
+  dispatch({ type: 'answer', id: unit.id, correct })
+  quizFeedback.value[unit.id] = correct ? 'correct' : 'incorrect'
 }
-
-function canVerify(id: string) {
-  const record = progressStore.value.units[id]
-  const unit = unitById.get(id)
-  return Boolean(
-    record &&
-    unit &&
-    prerequisitesSatisfied(unit) &&
-    evidenceComplete(id) &&
-    record.selfTestPassedAt &&
-    record.selfTestRevision === masteryRevision
-  )
-}
-
-function verifyUnit(id: string) {
-  if (!canVerify(id)) return
-  const timestamp = Date.now()
-  updateUnit(id, (record) => ({
-    ...record,
-    verifiedAt: timestamp,
-    nextReviewAt: timestamp + reviewIntervals[0],
-    reviewRound: 0,
-    verifiedRevision: masteryRevision,
-    legacyCompleted: undefined,
-    updatedAt: timestamp
-  }))
-  now.value = timestamp
-}
-
-function canReview(id: string) {
-  const record = progressStore.value.units[id]
-  if (
-    !record ||
-    statusOf(id) !== 'review' ||
-    !record.selfTestPassedAt ||
-    record.selfTestRevision !== masteryRevision ||
-    !record.nextReviewAt ||
-    !evidenceComplete(id)
-  ) return false
-  return record.selfTestPassedAt >= record.nextReviewAt &&
-    record.selfTestPassedAt > Math.max(record.lastReviewedAt ?? 0, record.verifiedAt ?? 0)
-}
-
-function completeReview(id: string) {
-  if (!canReview(id)) return
-  const timestamp = Date.now()
-  updateUnit(id, (record) => {
-    const nextRound = Math.min(reviewIntervals.length - 1, record.reviewRound + 1)
-    return {
-      ...record,
-      reviewRound: nextRound,
-      lastReviewedAt: timestamp,
-      nextReviewAt: timestamp + reviewIntervals[nextRound],
-      updatedAt: timestamp
-    }
-  })
-  now.value = timestamp
-}
-
+function canVerify(id: string) { return !pending.value && progressCanVerify(progressStore.value, id, now.value) }
+function canReview(id: string) { return !pending.value && progressCanReview(progressStore.value.units[id], now.value) }
+function verifyUnit(id: string) { dispatch({ type: 'verify', id }) }
+function completeReview(id: string) { dispatch({ type: 'review', id }) }
 function resetUnit(id: string) {
-  const units = { ...progressStore.value.units }
-  delete units[id]
-  progressStore.value = { ...progressStore.value, units }
-  const answers = { ...quizAnswers.value }
-  const feedback = { ...quizFeedback.value }
-  delete answers[id]
-  delete feedback[id]
-  quizAnswers.value = answers
-  quizFeedback.value = feedback
+  dispatch({ type: 'reset', id }); delete quizAnswers.value[id]; delete quizFeedback.value[id]
 }
 
 function requestReset() {
@@ -431,7 +255,7 @@ function requestReset() {
     resetTimer = window.setTimeout(() => { resetArmed.value = false }, 5000)
     return
   }
-  progressStore.value = { schemaVersion: 2, migratedFromV1: true, units: {} }
+  dispatch({ type: 'reset-all' })
   quizAnswers.value = {}
   quizFeedback.value = {}
   migrationNotice.value = false
@@ -481,23 +305,29 @@ async function copyCommand(unit: LearningUnit) {
   }, 1600)
 }
 
-onMounted(() => {
+onMounted(async () => {
+  let legacy = emptyStore()
+  try { legacy = migrateLegacy(localStorage, Date.now()) } catch { /* Storage can be disabled. */ }
   try {
-    const stored = localStorage.getItem(storageKey)
-    const normalized = stored === null ? null : normalizeStore(JSON.parse(stored))
-    progressStore.value = normalized ?? migrateLegacy()
-  } catch {
-    progressStore.value = migrateLegacy()
-  } finally {
-    hydrated.value = true
-    persistProgress()
+    repositoryStore = await ProgressRepository.open()
+    const initial = await repositoryStore.initialize(legacy)
+    if (disposed) { repositoryStore.close(); return }
+    accept(initial)
+    migrationNotice.value = Object.values(initial.units).some(record => record.legacyCompleted)
+  } catch { accept(legacy); storageError.value = true }
+  finally { hydrated.value = true }
+  if (disposed) return
+  if (typeof BroadcastChannel !== 'undefined') {
+    channel = new BroadcastChannel('dsa-learning-progress')
+    channel.onmessage = () => { void refresh() }
   }
-  clockTimer = window.setInterval(() => { now.value = Date.now() }, 60_000)
+  window.addEventListener('focus', refresh)
+  clockTimer = window.setInterval(() => { now.value = Date.now(); void refresh() }, 60_000)
 })
 
-watch(progressStore, persistProgress, { deep: true })
-
 onBeforeUnmount(() => {
+  disposed = true; channel?.close(); repositoryStore?.close()
+  window.removeEventListener('focus', refresh)
   if (clockTimer !== undefined) window.clearInterval(clockTimer)
   if (resetTimer !== undefined) window.clearTimeout(resetTimer)
   if (copyTimer !== undefined) window.clearTimeout(copyTimer)
@@ -505,7 +335,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="unit-explorer" aria-labelledby="unit-explorer-heading">
+  <section class="unit-explorer" :data-ready="hydrated" :inert="!hydrated" aria-labelledby="unit-explorer-heading">
     <div class="unit-progress">
       <div>
         <p class="unit-eyebrow">VERIFIED MASTERY · LOCAL ONLY</p>
@@ -525,11 +355,22 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
+    <div class="unit-backup">
+      <button type="button" :disabled="!hydrated || pending" @click="exportProgress">导出进度备份</button>
+      <label>导入进度备份 <input type="file" accept="application/json,.json" :disabled="!hydrated || pending" @change="previewImport" /></label>
+      <p>备份按单元更新时间合并，相同时间保留本地记录；跨设备导入前请校准设备时钟。</p>
+      <div v-if="importPreview" role="status">
+        新增 {{ importPreview.added }} · 更新 {{ importPreview.updated }} · 删除 {{ importPreview.deleted }} · 忽略 {{ importPreview.ignored }}
+        <button type="button" :disabled="pending" @click="confirmImport">确认合并备份</button>
+        <button type="button" @click="importData = null">取消导入</button>
+      </div>
+      <p v-if="notice" role="status">{{ notice }}</p>
+    </div>
     <p v-if="migrationNotice" class="unit-notice" role="status">
       旧版完成记录已迁移为“学习中”。请补答自测并完成证据清单，不会丢失原有单元位置。
     </p>
     <p v-if="storageError" class="unit-notice unit-notice--warning" role="status">
-      浏览器当前无法保存进度；本次页面内操作仍然有效。
+      浏览器当前无法保存进度；本次页面内操作仍然有效，但尚未持久化，请导出备份。
     </p>
 
     <section class="unit-recommendations" aria-labelledby="unit-recommendations-heading">

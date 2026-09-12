@@ -1,0 +1,1574 @@
+{
+  "dry": {
+    "commit": "7b588157a290d58979a92b4d3e89fa92be13aedc",
+    "dirty": true,
+    "capturedAt": "2026-09-12T00:40:29.340Z",
+    "rows": [
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 20, OutDegree: 2)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=20&OutDegree=2",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 2044900,
+        "allocatedBytes": 531368,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 20, OutDegree: 2)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=20&OutDegree=2",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 1728700,
+        "allocatedBytes": 203184,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 20, OutDegree: 8)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=20&OutDegree=8",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 3319400,
+        "allocatedBytes": 747136,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 20, OutDegree: 8)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=20&OutDegree=8",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 1393900,
+        "allocatedBytes": 304792,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 100, OutDegree: 2)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=100&OutDegree=2",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 9118800,
+        "allocatedBytes": 2295920,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 100, OutDegree: 2)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=100&OutDegree=2",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 2741700,
+        "allocatedBytes": 441416,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 100, OutDegree: 8)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=100&OutDegree=8",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 16117600,
+        "allocatedBytes": 3018736,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 100, OutDegree: 8)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=100&OutDegree=8",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 3698900,
+        "allocatedBytes": 1013520,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.ExactScalingScenarioBenchmarks.ExactComparison(TaskCount: 4)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "ExactScalingScenarioBenchmarks",
+        "method": "ExactComparison",
+        "parameters": "TaskCount=4",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 22289200,
+        "allocatedBytes": 13448,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.ExactScalingScenarioBenchmarks.ExactComparison(TaskCount: 6)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "ExactScalingScenarioBenchmarks",
+        "method": "ExactComparison",
+        "parameters": "TaskCount=6",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 21292200,
+        "allocatedBytes": 20608,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.ExactScalingScenarioBenchmarks.ExactComparison(TaskCount: 8)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "ExactScalingScenarioBenchmarks",
+        "method": "ExactComparison",
+        "parameters": "TaskCount=8",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 22020000,
+        "allocatedBytes": 27240,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SchedulingScalingScenarioBenchmarks.Greedy(TaskCount: 20)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SchedulingScalingScenarioBenchmarks",
+        "method": "Greedy",
+        "parameters": "TaskCount=20",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 17337800,
+        "allocatedBytes": 60688,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SchedulingScalingScenarioBenchmarks.Greedy(TaskCount: 100)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SchedulingScalingScenarioBenchmarks",
+        "method": "Greedy",
+        "parameters": "TaskCount=100",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 19697700,
+        "allocatedBytes": 376896,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.BuildIndex(DocumentCount: 100)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "BuildIndex",
+        "parameters": "DocumentCount=100",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 1662000,
+        "allocatedBytes": 843112,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.ColdQuery(DocumentCount: 100)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "ColdQuery",
+        "parameters": "DocumentCount=100",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 631500,
+        "allocatedBytes": 19832,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.CachedQuery(DocumentCount: 100)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "CachedQuery",
+        "parameters": "DocumentCount=100",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 460300,
+        "allocatedBytes": 944,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.Bm25Query(DocumentCount: 100)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "Bm25Query",
+        "parameters": "DocumentCount=100",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 3692600,
+        "allocatedBytes": 38984,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.BuildIndex(DocumentCount: 1000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "BuildIndex",
+        "parameters": "DocumentCount=1000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 11605700,
+        "allocatedBytes": 8085848,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.ColdQuery(DocumentCount: 1000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "ColdQuery",
+        "parameters": "DocumentCount=1000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 25863200,
+        "allocatedBytes": 106232,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.CachedQuery(DocumentCount: 1000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "CachedQuery",
+        "parameters": "DocumentCount=1000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 505200,
+        "allocatedBytes": 944,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.Bm25Query(DocumentCount: 1000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "Bm25Query",
+        "parameters": "DocumentCount=1000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 35792300,
+        "allocatedBytes": 305328,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.BuildIndex(DocumentCount: 10000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "BuildIndex",
+        "parameters": "DocumentCount=10000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 171706700,
+        "allocatedBytes": 80283688,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.ColdQuery(DocumentCount: 10000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "ColdQuery",
+        "parameters": "DocumentCount=10000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 580244800,
+        "allocatedBytes": 970232,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.CachedQuery(DocumentCount: 10000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "CachedQuery",
+        "parameters": "DocumentCount=10000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 496900,
+        "allocatedBytes": 944,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.Bm25Query(DocumentCount: 10000)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "Bm25Query",
+        "parameters": "DocumentCount=10000",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 668434000,
+        "allocatedBytes": 2910728,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 100, Hot: False)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=100&Hot=False",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 776200,
+        "allocatedBytes": 20992,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 100, Hot: True)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=100&Hot=True",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 532100,
+        "allocatedBytes": 8512,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 1000, Hot: False)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=1000&Hot=False",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 719300,
+        "allocatedBytes": 20992,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 1000, Hot: True)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=1000&Hot=True",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 516500,
+        "allocatedBytes": 8512,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 100, HistoryPerKey: 1)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=1",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 4670500,
+        "allocatedBytes": 232296,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 100, HistoryPerKey: 1)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=1",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 5377200,
+        "allocatedBytes": 157768,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 100, HistoryPerKey: 1)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=100&HistoryPerKey=1",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 8744500,
+        "allocatedBytes": 102616,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 100, HistoryPerKey: 10)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=10",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 11350600,
+        "allocatedBytes": 1794712,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 100, HistoryPerKey: 10)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=10",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 6248000,
+        "allocatedBytes": 158456,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 100, HistoryPerKey: 10)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=100&HistoryPerKey=10",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 6844500,
+        "allocatedBytes": 103448,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 1000, HistoryPerKey: 1)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=1",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 12082000,
+        "allocatedBytes": 2087664,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 1000, HistoryPerKey: 1)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=1",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 9196900,
+        "allocatedBytes": 1235712,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 1000, HistoryPerKey: 1)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=1000&HistoryPerKey=1",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 9604700,
+        "allocatedBytes": 930272,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 1000, HistoryPerKey: 10)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=10",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 80241100,
+        "allocatedBytes": 17855888,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 1000, HistoryPerKey: 10)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=10",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 9418100,
+        "allocatedBytes": 1242736,
+        "samples": 1
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 1000, HistoryPerKey: 10)\",\"Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=1000&HistoryPerKey=10",
+        "job": "Dry",
+        "jobDefinition": "Dry(IterationCount=1, LaunchCount=1, RunStrategy=ColdStart, UnrollFactor=1, WarmupCount=1)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 8991500,
+        "allocatedBytes": 938760,
+        "samples": 1
+      }
+    ]
+  },
+  "short": {
+    "commit": "7b588157a290d58979a92b4d3e89fa92be13aedc",
+    "dirty": true,
+    "capturedAt": "2026-09-12T00:40:29.561Z",
+    "rows": [
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 20, OutDegree: 2)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=20&OutDegree=2",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 534844.873046875,
+        "allocatedBytes": 502120,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 20, OutDegree: 2)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=20&OutDegree=2",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 103122.2412109375,
+        "allocatedBytes": 176496,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 20, OutDegree: 8)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=20&OutDegree=8",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 543554.296875,
+        "allocatedBytes": 710208,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 20, OutDegree: 8)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=20&OutDegree=8",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 170342.2119140625,
+        "allocatedBytes": 270424,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 100, OutDegree: 2)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=100&OutDegree=2",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 1261735.9375,
+        "allocatedBytes": 2256432,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 100, OutDegree: 2)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=100&OutDegree=2",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 247845.458984375,
+        "allocatedBytes": 404488,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.FirstPlan(LocationCount: 100, OutDegree: 8)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "FirstPlan",
+        "parameters": "LocationCount=100&OutDegree=8",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 2934612.5,
+        "allocatedBytes": 2940848,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.DeliveryScalingScenarioBenchmarks.CachedRoutes(LocationCount: 100, OutDegree: 8)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "DeliveryScalingScenarioBenchmarks",
+        "method": "CachedRoutes",
+        "parameters": "LocationCount=100&OutDegree=8",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 621537.98828125,
+        "allocatedBytes": 938192,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.ExactScalingScenarioBenchmarks.ExactComparison(TaskCount: 4)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "ExactScalingScenarioBenchmarks",
+        "method": "ExactComparison",
+        "parameters": "TaskCount=4",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 3565.169906616211,
+        "allocatedBytes": 13040,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.ExactScalingScenarioBenchmarks.ExactComparison(TaskCount: 6)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "ExactScalingScenarioBenchmarks",
+        "method": "ExactComparison",
+        "parameters": "TaskCount=6",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 7114.459228515625,
+        "allocatedBytes": 20320,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.ExactScalingScenarioBenchmarks.ExactComparison(TaskCount: 8)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "ExactScalingScenarioBenchmarks",
+        "method": "ExactComparison",
+        "parameters": "TaskCount=8",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 10535.826110839844,
+        "allocatedBytes": 26992,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SchedulingScalingScenarioBenchmarks.Greedy(TaskCount: 20)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SchedulingScalingScenarioBenchmarks",
+        "method": "Greedy",
+        "parameters": "TaskCount=20",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 25557.5927734375,
+        "allocatedBytes": 60584,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SchedulingScalingScenarioBenchmarks.Greedy(TaskCount: 100)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SchedulingScalingScenarioBenchmarks",
+        "method": "Greedy",
+        "parameters": "TaskCount=100",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 167480.2490234375,
+        "allocatedBytes": 376792,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.BuildIndex(DocumentCount: 100)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "BuildIndex",
+        "parameters": "DocumentCount=100",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 264493.310546875,
+        "allocatedBytes": 831912,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.CachedQuery(DocumentCount: 100)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "CachedQuery",
+        "parameters": "DocumentCount=100",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 172.24080562591553,
+        "allocatedBytes": 904,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.Bm25Query(DocumentCount: 100)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "Bm25Query",
+        "parameters": "DocumentCount=100",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 59970.318603515625,
+        "allocatedBytes": 38936,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.ColdQuery(DocumentCount: 100)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "ColdQuery",
+        "parameters": "DocumentCount=100",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 314600,
+        "allocatedBytes": 19832,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.BuildIndex(DocumentCount: 1000)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "BuildIndex",
+        "parameters": "DocumentCount=1000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 2858750.78125,
+        "allocatedBytes": 7973848,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.CachedQuery(DocumentCount: 1000)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "CachedQuery",
+        "parameters": "DocumentCount=1000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 172.6198673248291,
+        "allocatedBytes": 904,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.Bm25Query(DocumentCount: 1000)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "Bm25Query",
+        "parameters": "DocumentCount=1000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 4378130.46875,
+        "allocatedBytes": 305280,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.ColdQuery(DocumentCount: 1000)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "ColdQuery",
+        "parameters": "DocumentCount=1000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 5293100,
+        "allocatedBytes": 106232,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.BuildIndex(DocumentCount: 10000)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "BuildIndex",
+        "parameters": "DocumentCount=10000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 59012844.44444445,
+        "allocatedBytes": 79163892,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.CachedQuery(DocumentCount: 10000)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "CachedQuery",
+        "parameters": "DocumentCount=10000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 161.54074668884277,
+        "allocatedBytes": 904,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.Bm25Query(DocumentCount: 10000)\",\"ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "Bm25Query",
+        "parameters": "DocumentCount=10000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 570487800,
+        "allocatedBytes": 2910728,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.SearchScalingScenarioBenchmarks.ColdQuery(DocumentCount: 10000)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "SearchScalingScenarioBenchmarks",
+        "method": "ColdQuery",
+        "parameters": "DocumentCount=10000",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 522083400,
+        "allocatedBytes": 946328,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 100, Hot: False)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=100&Hot=False",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 62000,
+        "allocatedBytes": 20992,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 100, Hot: True)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=100&Hot=True",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 14100,
+        "allocatedBytes": 8512,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 1000, Hot: False)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=1000&Hot=False",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 85700,
+        "allocatedBytes": 20992,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageReadScalingScenarioBenchmarks.Read(LiveKeys: 1000, Hot: True)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageReadScalingScenarioBenchmarks",
+        "method": "Read",
+        "parameters": "LiveKeys=1000&Hot=True",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 13600,
+        "allocatedBytes": 8512,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 100, HistoryPerKey: 1)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=1",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 3568700,
+        "allocatedBytes": 232296,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 100, HistoryPerKey: 1)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=1",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 5395700,
+        "allocatedBytes": 157768,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 100, HistoryPerKey: 1)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=100&HistoryPerKey=1",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 7686700,
+        "allocatedBytes": 102616,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 100, HistoryPerKey: 10)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=10",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 11180200,
+        "allocatedBytes": 1794712,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 100, HistoryPerKey: 10)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=100&HistoryPerKey=10",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 6778300,
+        "allocatedBytes": 158456,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 100, HistoryPerKey: 10)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=100&HistoryPerKey=10",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 7146800,
+        "allocatedBytes": 103448,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 1000, HistoryPerKey: 1)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=1",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 10175700,
+        "allocatedBytes": 2087664,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 1000, HistoryPerKey: 1)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=1",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 5645500,
+        "allocatedBytes": 1235712,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 1000, HistoryPerKey: 1)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=1000&HistoryPerKey=1",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 7331150,
+        "allocatedBytes": 930272,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.FullWalRecovery(LiveKeys: 1000, HistoryPerKey: 10)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "FullWalRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=10",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 54973900,
+        "allocatedBytes": 17855888,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.SnapshotRecovery(LiveKeys: 1000, HistoryPerKey: 10)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "SnapshotRecovery",
+        "parameters": "LiveKeys=1000&HistoryPerKey=10",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 6033400,
+        "allocatedBytes": 1242736,
+        "samples": 3
+      },
+      {
+        "key": "[\"DataStructureAndAlgorithm.Benchmarks.StorageScalingScenarioBenchmarks.Checkpoint(LiveKeys: 1000, HistoryPerKey: 10)\",\"ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)\",[\"Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)\",\"Intel Core i7-14650HX\",\".NET 10.0.12 (10.0.12, 10.0.1226.42308)\",\"X64\",\"10.0.401\",\"0.15.8\"]]",
+        "type": "StorageScalingScenarioBenchmarks",
+        "method": "Checkpoint",
+        "parameters": "LiveKeys=1000&HistoryPerKey=10",
+        "job": "ShortRun",
+        "jobDefinition": "ShortRun(InvocationCount=1, IterationCount=3, LaunchCount=1, UnrollFactor=1, WarmupCount=3)",
+        "environment": [
+          "Windows 11 (10.0.26200.9445/25H2/2025Update/HudsonValley2)",
+          "Intel Core i7-14650HX",
+          ".NET 10.0.12 (10.0.12, 10.0.1226.42308)",
+          "X64",
+          "10.0.401",
+          "0.15.8"
+        ],
+        "medianNs": 9231300,
+        "allocatedBytes": 938760,
+        "samples": 3
+      }
+    ]
+  }
+}
