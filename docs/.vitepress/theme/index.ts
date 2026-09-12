@@ -1,3 +1,4 @@
+import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import LearningUnitExplorer from './components/LearningUnitExplorer.vue'
 import TracePlayer from './components/TracePlayer.vue'
@@ -9,4 +10,4 @@ export default {
     app.component('LearningUnitExplorer', LearningUnitExplorer)
     app.component('TracePlayer', TracePlayer)
   }
-}
+} satisfies Theme

@@ -628,7 +628,7 @@ def markdown_to_flowables(markdown: str, styles: dict[str, ParagraphStyle]) -> l
         if heading:
             flush_paragraph()
             level = len(heading.group(1))
-            title = heading.group(2).strip()
+            title = re.sub(r"\s+\{#[^}]+\}\s*$", "", heading.group(2)).strip()
             if level == 1:
                 # The consolidated book already supplies a part title, so the source
                 # document title would only repeat the same information.

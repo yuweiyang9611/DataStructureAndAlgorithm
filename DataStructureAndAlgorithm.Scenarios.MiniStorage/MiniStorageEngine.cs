@@ -12,7 +12,7 @@ namespace DataStructureAndAlgorithm.Scenarios.MiniStorage;
 /// <remarks>
 /// <para>
 /// 该类型刻意保持同步、小规模和单进程：目标是讲清每个数据结构在存储读写路径中的责任，
-/// 而不是模拟数据库的并发控制、页缓存、校验和或复制协议。
+/// 而不是模拟数据库的并发控制、页缓存或复制协议。
 /// </para>
 /// <para>
 /// 写路径为“WAL -> B+ 树 -> Bloom/缓存”，读路径为“LFU -> Bloom -> B+ 树”。
@@ -24,9 +24,9 @@ public sealed class MiniStorageEngine : IDisposable
     private const string TraceAlgorithm = "MiniStorage";
     private static readonly StringComparer KeyComparer = StringComparer.Ordinal;
 
-    private readonly BPlusTree<string, StoredValue> _index;
-    private readonly StringBloomFilter _bloomFilter;
-    private readonly LfuCache<string, CachedLookup> _cache;
+    private BPlusTree<string, StoredValue> _index;
+    private StringBloomFilter _bloomFilter;
+    private LfuCache<string, CachedLookup> _cache;
     private readonly IAlgorithmTraceSink? _trace;
     private readonly WriteAheadLog? _writeAheadLog;
     private long _version;
@@ -39,10 +39,22 @@ public sealed class MiniStorageEngine : IDisposable
     private long _indexLookups;
     private long _walRecordsReplayed;
     private bool _disposed;
+    private bool _faulted;
+    private readonly MiniStorageOptions _options;
+    private readonly IPersistenceFaults? _faults;
+    private readonly FileStream? _ownership;
+    private readonly string? _snapshotPath;
+    private long _snapshotVersion;
+    private int _snapshotEntriesLoaded;
 
     public MiniStorageEngine(MiniStorageOptions? options = null, IAlgorithmTraceSink? trace = null)
+        : this(options, trace, null) { }
+
+    internal MiniStorageEngine(MiniStorageOptions? options, IAlgorithmTraceSink? trace, IPersistenceFaults? faults)
     {
         options ??= new MiniStorageOptions();
+        _options = options;
+        _faults = faults;
         ValidateOptions(options);
 
         _index = new BPlusTree<string, StoredValue>(options.BPlusTreeOrder, KeyComparer);
@@ -52,9 +64,21 @@ public sealed class MiniStorageEngine : IDisposable
 
         if (options.WriteAheadLogPath is not null)
         {
-            Recover(options.WriteAheadLogPath);
-            WriteAheadLog.DiscardUncommittedTail(options.WriteAheadLogPath);
-            _writeAheadLog = new WriteAheadLog(options.WriteAheadLogPath);
+            var path = Path.GetFullPath(options.WriteAheadLogPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            _ownership = new FileStream(path + ".lock", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            _snapshotPath = path + ".snapshot";
+            try
+            {
+                Recover(path);
+                WriteAheadLog.DiscardUncommittedTail(path);
+                _writeAheadLog = new WriteAheadLog(path, faults);
+            }
+            catch
+            {
+                _ownership.Dispose();
+                throw;
+            }
         }
     }
 
@@ -75,7 +99,7 @@ public sealed class MiniStorageEngine : IDisposable
         ArgumentNullException.ThrowIfNull(value);
 
         var nextVersion = checked(_version + 1);
-        _writeAheadLog?.Append(new WalRecord(nextVersion, WalOperation.Put, key, value));
+        Append(new WalRecord(nextVersion, WalOperation.Put, key, value));
         ApplyPut(key, value, nextVersion, isRecovery: false);
         _putCount++;
 
@@ -108,7 +132,7 @@ public sealed class MiniStorageEngine : IDisposable
         }
 
         var nextVersion = checked(_version + 1);
-        _writeAheadLog?.Append(new WalRecord(nextVersion, WalOperation.Delete, key, Value: null));
+        Append(new WalRecord(nextVersion, WalOperation.Delete, key, Value: null));
         ApplyDelete(key, nextVersion, isRecovery: false);
         _deleteCount++;
 
@@ -233,7 +257,11 @@ public sealed class MiniStorageEngine : IDisposable
             _cacheHits,
             _bloomNegativeSkips,
             _indexLookups,
-            _walRecordsReplayed);
+            _walRecordsReplayed)
+        {
+            SnapshotVersion = _snapshotVersion,
+            SnapshotEntriesLoaded = _snapshotEntriesLoaded
+        };
     }
 
     /// <summary>暴露结构校验而不暴露内部节点，供状态机测试验证每一步。</summary>
@@ -250,8 +278,8 @@ public sealed class MiniStorageEngine : IDisposable
             return;
         }
 
-        _writeAheadLog?.Dispose();
-        _disposed = true;
+        try { _writeAheadLog?.Dispose(); }
+        finally { _ownership?.Dispose(); _disposed = true; }
     }
 
     private void Recover(string path)
@@ -261,27 +289,24 @@ public sealed class MiniStorageEngine : IDisposable
             _trace.Record(TraceAlgorithm, "RecoveryStarted", "开始按 WAL 顺序重建内存索引。");
         }
 
-        long previousSequence = 0;
+        var snapshot = StorageSnapshot.Read(path + ".snapshot");
+        if (snapshot is not null)
+        {
+            foreach (var entry in snapshot.Entries) ApplyPut(entry.Key, entry.Value, entry.Version, isRecovery: true);
+            _version = _snapshotVersion = snapshot.Version;
+            _snapshotEntriesLoaded = snapshot.Entries.Length;
+        }
+
+        long? previousSequence = null;
         foreach (var record in WriteAheadLog.ReadAll(path))
         {
-            if (record.Sequence <= previousSequence)
-            {
-                throw new InvalidDataException("WAL 序列号必须严格递增。");
-            }
-
-            switch (record.Operation)
-            {
-                case WalOperation.Put:
-                    ApplyPut(record.Key, record.Value!, record.Sequence, isRecovery: true);
-                    break;
-                case WalOperation.Delete:
-                    ApplyDelete(record.Key, record.Sequence, isRecovery: true);
-                    break;
-                default:
-                    throw new InvalidDataException($"不支持的 WAL 操作：{record.Operation}。");
-            }
-
+            if (previousSequence is { } previous && record.Sequence != checked(previous + 1))
+                throw new InvalidDataException("WAL 序列号必须连续递增。");
             previousSequence = record.Sequence;
+            if (record.Sequence <= _snapshotVersion) continue;
+            if (record.Sequence != checked(_version + 1)) throw new InvalidDataException("WAL 缺少快照之后的记录。");
+            if (record.Operation == WalOperation.Put) ApplyPut(record.Key, record.Value!, record.Sequence, isRecovery: true);
+            else ApplyDelete(record.Key, record.Sequence, isRecovery: true);
             _walRecordsReplayed++;
         }
 
@@ -377,7 +402,48 @@ public sealed class MiniStorageEngine : IDisposable
 
     private static string Format(long value) => value.ToString(CultureInfo.InvariantCulture);
 
-    private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
+    private void ThrowIfDisposed()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_faulted) throw new InvalidOperationException("持久化失败后必须关闭并重新打开引擎。");
+    }
+
+    private void Append(WalRecord record)
+    {
+        try { _writeAheadLog?.Append(record); }
+        catch { _faulted = true; throw; }
+    }
+
+    /// <summary>先提交校验快照，再截断日志并回收内存墓碑。仅用于单写者进程恢复教学。</summary>
+    public CheckpointResult Checkpoint()
+    {
+        ThrowIfDisposed();
+        if (_writeAheadLog is null || _snapshotPath is null) throw new InvalidOperationException("检查点需要 WAL 持久化模式。");
+        var entries = _index.Where(pair => !pair.Value.IsDeleted)
+            .Select(pair => new StorageEntry(pair.Key, pair.Value.Value!, pair.Value.Version)).ToArray();
+        var compacted = new BPlusTree<string, StoredValue>(_options.BPlusTreeOrder, KeyComparer);
+        var bloom = new StringBloomFilter(_options.BloomBitCount, _options.BloomHashFunctionCount);
+        var cache = new LfuCache<string, CachedLookup>(_options.CacheCapacity, KeyComparer);
+        foreach (var entry in entries)
+        {
+            compacted.Upsert(entry.Key, new StoredValue(entry.Value, entry.Version, false));
+            bloom.Add(entry.Key);
+        }
+        var before = _writeAheadLog.Length;
+        var tombstones = _index.Count - entries.Length;
+        try
+        {
+            new StorageSnapshot(_version, entries).Publish(_snapshotPath, _faults);
+            _writeAheadLog.Truncate();
+            _index = compacted; _bloomFilter = bloom; _cache = cache;
+            _snapshotVersion = _version;
+            _faults?.At(PersistenceStage.CheckpointCompleted);
+        }
+        catch { _faulted = true; throw; }
+        _trace?.Record(TraceAlgorithm, "CheckpointCompleted", "快照已提交，旧 WAL 已截断，墓碑已回收。",
+            new Dictionary<string, string>(StringComparer.Ordinal) { ["version"] = Format(_version), ["liveKeys"] = Format(entries.Length) });
+        return new CheckpointResult(_version, entries.Length, tombstones, before, _writeAheadLog.Length);
+    }
 
     private sealed record StoredValue(string? Value, long Version, bool IsDeleted);
 

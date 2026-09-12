@@ -21,6 +21,7 @@ try
 {
     object result;
     StorageStatistics beforeRestart;
+    CheckpointResult checkpoint;
     IReadOnlyList<StorageEntry> activeUsers;
 
     var options = new MiniStorageOptions(
@@ -41,10 +42,12 @@ try
         engine.Delete("user:002");
 
         activeUsers = engine.RangeScan("user:000", "user:999");
+        checkpoint = engine.Checkpoint();
+        engine.Put("user:004", "Barbara");
         beforeRestart = engine.GetStatistics();
     }
 
-    // 第二段重新构造引擎，证明结果来自 WAL 回放，而不是仍然存活的旧对象。
+    // 第二段重新构造引擎，证明结果来自快照加载与增量 WAL 回放，而不是仍然存活的旧对象。
     using (var recovered = new MiniStorageEngine(options, trace))
     {
         var adaRecovered = recovered.TryGet("user:001", out var ada);
@@ -62,6 +65,7 @@ try
                 deletedKeyRecovered,
                 unknownKeyFound
             },
+            checkpoint,
             beforeRestart,
             afterRestart = recovered.GetStatistics(),
             indexInvariantsValid = recovered.HasValidIndexInvariants()
@@ -97,7 +101,7 @@ try
 finally
 {
     // Demo 的 WAL 只用于一次可复现演示；真实应用应把路径指向持久数据目录并保留文件。
-    File.Delete(walPath);
+    foreach (var suffix in new[] { "", ".snapshot", ".snapshot.tmp", ".lock" }) File.Delete(walPath + suffix);
 }
 
 static TraceFormat ParseTraceFormat(string[] arguments)

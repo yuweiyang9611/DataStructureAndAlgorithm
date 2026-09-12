@@ -22,3 +22,6 @@ __pycache__/
 tmp/
 BenchmarkDotNet.Artifacts/
 StrykerOutput/
+
+playwright-report/
+test-results/

@@ -58,7 +58,7 @@
 - `DataStructureAndAlgorithm.Scenarios.CityDelivery/`：最大派单数下最小化总旅行时间，并计算维护森林。
 - `DataStructureAndAlgorithm.Scenarios.MiniSearch/`：位置索引、BM25、短语/邻近查询、补全与 BK-tree 纠错。
 - `DataStructureAndAlgorithm.Scenarios.ProjectScheduling/`：DAG 约束、懒标记资源树、贪心排期与小规模精确对照。
-- `DataStructureAndAlgorithm.Scenarios.MiniStorage/`：B+ 树主索引、Bloom/LFU 加速和 WAL 恢复。
+- `DataStructureAndAlgorithm.Scenarios.MiniStorage/`：B+ 树主索引、Bloom/LFU 加速、校验 WAL、快照检查点和增量恢复。
 - `DataStructureAndAlgorithm.Benchmarks/`：使用 BenchmarkDotNet 比较教学实现、标准库和场景趋势，并报告内存分配。
 - `DataStructureAndAlgorithm/LeetCode/`：按题型组织的经典题 C# 14 解法。
 - `DataStructureAndAlgorithm.Test/`：xUnit、FsCheck、模型/差分/状态机测试、追踪契约和结构不变量验证。
@@ -73,7 +73,9 @@ dotnet build DataStructureAndAlgorithm.slnx --configuration Release
 dotnet test DataStructureAndAlgorithm.slnx --configuration Release --no-build
 ```
 
-CI 使用同一套 Release 契约。当前验证基线（2026-08-15）为 Release 构建 `0 warning / 0 error`、自动化测试 `465/465` 通过、行覆盖率 `91.94%`、分支覆盖率 `84.80%`；最近一次六个关键文件的 Stryker Basic 变异验证（2026-07-18）分数为 `81.07%`。稳定覆盖率门槛分别为 `80%` 和 `70%`，变异测试 break 阈值为 `60%`。快照会随代码与测试变化，后续仍以最新测试、报告和 CI 结果为准。
+CI 使用同一套 Release 契约。本次验证基线（2026-09-12）为 Windows/Linux 自动化测试 `508/508` 通过，行覆盖率 `95.38%`、分支覆盖率 `86.86%`（显式包含四个综合场景）。前端具有独立状态测试、类型检查和 Chromium/Firefox/WebKit 交互测试。稳定覆盖率门槛分别为 `80%` 和 `70%`；五组 Stryker Basic 变异测试的 break 阈值为 `60%`，实际分数见各组报告。后续以最新测试和 CI 结果为准。
+
+本次完整验收数字、五组变异得分和参数化性能报告见[五项完善验收记录](output/quality/2026-09-12/verification.md)。
 
 质量证据分工如下：
 
@@ -121,7 +123,41 @@ dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter
 - 半开区间 `[start, end)` 用于数组、时间槽和范围 API，避免相邻区间边界重复。
 - 泛型有序结构通过 `IComparer<T>` 定义顺序；用户可见结果不依赖哈希枚举顺序。
 - 缓存和 Bloom Filter 都是可重建加速层，不能成为领域事实来源。
-- WAL 先于内存索引修改，并以 LF 换行作为记录提交标记；重启会忽略并截断最后一个半写片段，但不等于具备事务、校验和或生产级持久性。
+- WAL 先于内存索引修改，并以 LF 换行作为记录提交标记；重启会忽略并截断最后一个半写片段，新记录使用 SHA-256 校验，手动检查点先提交快照再截断旧日志；保证范围是单写者进程恢复，不承诺跨记录事务或断电一致性。
 - A* 只有在启发函数可采纳时才保证最优；缺少可靠地理下界时使用零启发函数。
 - 精确调度只面向有显式任务数/时间跨度上限的小实例；常规规模使用确定性启发式。
 - 教学实现用于学习不变量和复杂度，生产项目应优先选择成熟的 .NET 集合、数据库、搜索或调度组件。
+
+## 学习进度、交互测试与性能实验
+
+学习进度保存在 IndexedDB，使用事务避免标签页互相覆盖，并通过 BroadcastChannel 和焦点刷新同步。v1/v2 记录会一次性迁移；可以导出 v3 JSON 备份。导入先预览，再按单元更新时间合并，相同时间保留本地；重置包含删除标记，旧备份不会自动复活较新的删除。跨设备导入前请校准设备时钟。存储被禁用时页面仍可学习和导出，但会明确提示尚未持久化。
+
+前端使用 Node.js 24：
+
+```powershell
+npm ci
+npm run docs:typecheck
+npm run docs:test
+npm run docs:build
+npx playwright install chromium firefox webkit
+npm run docs:test:e2e
+```
+
+参数化基准按 Search、Delivery、Scheduling、Exact、Storage 分组；BM25 排名没有查询缓存，兼容 AND 查询分别测试冷缓存与命中。恢复基准对比相同最终键空间和版本的完整 WAL 与快照增量恢复。
+
+```powershell
+dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter "*ScalingScenarioBenchmarks*" --job Dry --exporters json markdown
+dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter "*StorageScalingScenarioBenchmarks*" --job Short --exporters json markdown
+node tools/benchmark_report.mjs BenchmarkDotNet.Artifacts
+```
+
+PR 执行 Dry，周期任务执行 Short，手动任务可选 Default。报告保留 90 天；趋势按方法、参数、作业和运行环境对齐，不使用共享 CI 的毫秒硬阈值。覆盖率显式包含算法类库与四个场景：
+
+```powershell
+dotnet test DataStructureAndAlgorithm.slnx -c Release --collect "XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults/current
+./tools/check_coverage.ps1 -Report TestResults/current
+cd DataStructureAndAlgorithm.Test
+dotnet stryker --config-file stryker-storage.json
+```
+
+变异测试还提供 core、delivery、search、scheduling 四个同名配置；所有组保持 Basic 和 60% break 门槛。

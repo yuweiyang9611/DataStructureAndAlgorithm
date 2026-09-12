@@ -37,4 +37,5 @@
       <ProjectReference Include="..\DataStructureAndAlgorithm.Scenarios.MiniStorage\DataStructureAndAlgorithm.Scenarios.MiniStorage.csproj" />
       <ProjectReference Include="..\DataStructureAndAlgorithm.Scenarios.ProjectScheduling\DataStructureAndAlgorithm.Scenarios.ProjectScheduling.csproj" />
     </ItemGroup>
+  <ItemGroup><ProjectReference Include="../DataStructureAndAlgorithm.StorageCrashHost/DataStructureAndAlgorithm.StorageCrashHost.csproj" ReferenceOutputAssembly="false" /></ItemGroup>
 </Project>

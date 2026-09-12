@@ -7,5 +7,6 @@
   <Project Path="DataStructureAndAlgorithm.Scenarios.MiniSearch/DataStructureAndAlgorithm.Scenarios.MiniSearch.csproj" />
   <Project Path="DataStructureAndAlgorithm.Scenarios.MiniStorage/DataStructureAndAlgorithm.Scenarios.MiniStorage.csproj" />
   <Project Path="DataStructureAndAlgorithm.Scenarios.ProjectScheduling/DataStructureAndAlgorithm.Scenarios.ProjectScheduling.csproj" />
+  <Project Path="DataStructureAndAlgorithm.StorageCrashHost/DataStructureAndAlgorithm.StorageCrashHost.csproj" />
   <Project Path="DataStructureAndAlgorithm.Test/DataStructureAndAlgorithm.Test.csproj" />
 </Solution>

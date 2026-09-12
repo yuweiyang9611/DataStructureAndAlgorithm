@@ -32,4 +32,11 @@ public sealed record StorageStatistics(
     long CacheHits,
     long BloomNegativeSkips,
     long IndexLookups,
-    long WalRecordsReplayed);
+    long WalRecordsReplayed)
+{
+    public long SnapshotVersion { get; init; }
+    public int SnapshotEntriesLoaded { get; init; }
+}
+
+/// <summary>一次手动检查点回收的空间与提交版本。</summary>
+public sealed record CheckpointResult(long Version, int EntryCount, int ReclaimedTombstones, long WalBytesBefore, long WalBytesAfter);

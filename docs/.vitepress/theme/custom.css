@@ -1729,3 +1729,61 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Backup controls stay usable at narrow widths and with keyboard navigation. */
+.unit-backup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--learning-line);
+  border-radius: 10px;
+  font-size: 0.86rem;
+}
+
+.unit-backup label,
+.unit-backup > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.unit-backup input {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.unit-backup p {
+  flex-basis: 100%;
+  margin: 0 !important;
+  color: var(--learning-muted);
+}
+
+.unit-backup button,
+.trace-error button {
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 1px solid var(--learning-line);
+  border-radius: 6px;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.unit-backup button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.unit-backup button:focus-visible,
+.unit-backup input:focus-visible,
+.trace-error button:focus-visible {
+  outline: 3px solid var(--vp-c-brand-2);
+  outline-offset: 3px;
+}
