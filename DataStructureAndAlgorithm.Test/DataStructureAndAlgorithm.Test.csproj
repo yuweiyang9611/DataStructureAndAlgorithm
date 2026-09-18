@@ -23,7 +23,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <!-- ReflectionMagic简化了通过反射获取不同程序集、不同类中私有成员的过程(仅用于测试，否则访问修饰符会失去作用) -->
-        <PackageReference Include="ReflectionMagic" Version="5.0.1" />
+        <PackageReference Include="ReflectionMagic" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
