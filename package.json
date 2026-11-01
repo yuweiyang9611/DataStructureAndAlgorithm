@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
-    "@types/node": "26.5.0",
+    "@types/node": "26.6.6",
     "fake-indexeddb": "6.2.5",
     "typescript": "5.9.3",
     "vitepress": "2.0.0-alpha.20",
