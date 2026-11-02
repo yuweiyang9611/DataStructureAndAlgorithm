@@ -12,47 +12,10 @@ import { learningUnits, repository, stageLabels, type LearningUnit } from '../..
 import { emptyStore, applyAction, statusOf as progressStatus, canVerify as progressCanVerify, canReview as progressCanReview, migrateLegacy, parseBackup, exportBackup, mergeBackup, type ProgressAction, type ImportData } from '../../data/progress.ts'
 import { parseBackupJson } from '../../data/backupJson.ts'
 import { ProgressRepository, StaleProgressError } from '../../data/progressRepository.ts'
+import { orderedUnits, readCourse, stepsDone, unitSteps } from '../../data/record.ts'
+import NbText from './NbText'
 type QuizFeedback = 'correct' | 'incorrect' | 'missing'
-const stageOrder = new Map(
-  ['S02', 'S03', 'S04', 'A01', 'S05', 'S06', 'A02', 'P03', 'PRACTICE', 'S07']
-    .map((key, index) => [key, index])
-)
-const originalOrder = new Map(learningUnits.map((unit, index) => [unit.id, index]))
 const unitById = new Map(learningUnits.map((unit) => [unit.id, unit]))
-
-function compareUnits(left: LearningUnit, right: LearningUnit) {
-  const stageDifference = (stageOrder.get(left.stage) ?? 99) - (stageOrder.get(right.stage) ?? 99)
-  return stageDifference || (originalOrder.get(left.id) ?? 0) - (originalOrder.get(right.id) ?? 0)
-}
-
-function topologicalOrder(units: LearningUnit[]) {
-  const indegree = new Map(units.map((unit) => [unit.id, unit.prerequisites.length]))
-  const dependents = new Map(units.map((unit) => [unit.id, [] as string[]]))
-  for (const unit of units) {
-    for (const prerequisite of unit.prerequisites) dependents.get(prerequisite)?.push(unit.id)
-  }
-
-  const ready = units.filter((unit) => indegree.get(unit.id) === 0).sort(compareUnits)
-  const ordered: LearningUnit[] = []
-  while (ready.length) {
-    const unit = ready.shift()!
-    ordered.push(unit)
-    for (const dependentId of dependents.get(unit.id) ?? []) {
-      const nextDegree = (indegree.get(dependentId) ?? 1) - 1
-      indegree.set(dependentId, nextDegree)
-      if (nextDegree === 0) {
-        const dependent = unitById.get(dependentId)
-        if (dependent) {
-          ready.push(dependent)
-          ready.sort(compareUnits)
-        }
-      }
-    }
-  }
-  return ordered.length === units.length ? ordered : [...units].sort(compareUnits)
-}
-
-const orderedUnits = topologicalOrder(learningUnits)
 const query = ref('')
 const stage = ref('all')
 const difficulty = ref('all')
@@ -174,6 +137,13 @@ const verifiedCount = computed(() => orderedUnits.filter((unit) => isMastered(un
 const dueCount = computed(() => orderedUnits.filter((unit) => statusOf(unit.id) === 'review').length)
 const progressPercent = computed(() => Math.round((verifiedCount.value / learningUnits.length) * 100))
 const hasProgress = computed(() => Object.keys(progressStore.value.units).length > 0)
+// The one stopped mark in the register, from the same rule as the course's continue link.
+const stoppedId = computed(() => {
+  if (!hydrated.value) return undefined
+  const course = readCourse(progressStore.value, now.value)
+  return course.hasRecord && course.kind !== 'complete' ? course.unit?.id : undefined
+})
+function unitFraction(id: string) { return stepsDone(progressStore.value.units[id], now.value) / unitSteps }
 
 const filteredUnits = computed(() => {
   const needle = query.value.trim().toLocaleLowerCase('zh-CN')
@@ -334,56 +304,55 @@ onBeforeUnmount(() => {
 })
 </script>
 
+
 <template>
   <section class="unit-explorer" :data-ready="hydrated" :inert="!hydrated" aria-labelledby="unit-explorer-heading">
     <div class="unit-progress">
-      <div>
-        <p class="unit-eyebrow">VERIFIED MASTERY · LOCAL ONLY</p>
-        <h2 id="unit-explorer-heading">22 个可验证学习单元</h2>
-        <p>进度只保存在当前浏览器。自测答对并完成不变量、测试和迁移三类证据后，单元才会标记为“已验证”。</p>
-      </div>
-      <div class="unit-progress-meter" aria-live="polite">
-        <strong>{{ verifiedCount }} / {{ learningUnits.length }}</strong>
-        <span>已验证过 · {{ progressPercent }}%<template v-if="dueCount"> · {{ dueCount }} 个待复习</template></span>
-        <progress :value="verifiedCount" :max="learningUnits.length" aria-label="已验证学习单元">
-          {{ progressPercent }}%
-        </progress>
-        <div v-if="hasProgress" class="unit-reset-actions">
-          <button type="button" class="unit-reset" @click="requestReset">{{ resetArmed ? '确认清空全部进度' : '清空本地进度' }}</button>
-          <button v-if="resetArmed" type="button" class="unit-reset unit-reset-cancel" @click="cancelReset">取消</button>
-        </div>
-      </div>
+      <h2 id="unit-explorer-heading">22 个可验证学习单元</h2>
+      <div
+        class="record-track"
+        role="progressbar"
+        aria-label="已验证学习单元"
+        aria-valuemin="0"
+        :aria-valuemax="learningUnits.length"
+        :aria-valuenow="verifiedCount"
+      ><span :style="{ transform: `scaleX(${verifiedCount / learningUnits.length})` }" /></div>
+      <p class="unit-progress-copy" aria-live="polite">
+        <strong>{{ verifiedCount }} / {{ learningUnits.length }}</strong> 已验证 · {{ progressPercent }}%<template v-if="dueCount"> · {{ dueCount }} 个待复习</template>
+      </p>
+      <p class="unit-progress-note">进度只保存在当前浏览器。自测答对并完成不变量、测试和迁移三类证据后，单元才会标记为“已验证<span class="nb-halt">”</span>。</p>
     </div>
 
     <div class="unit-backup">
-      <button type="button" :disabled="!hydrated || pending" @click="exportProgress">导出进度备份</button>
-      <label>导入进度备份 <input type="file" accept="application/json,.json" :disabled="!hydrated || pending" @change="previewImport" /></label>
-      <p>备份按单元更新时间合并，相同时间保留本地记录；跨设备导入前请校准设备时钟。</p>
-      <div v-if="importPreview" role="status">
-        新增 {{ importPreview.added }} · 更新 {{ importPreview.updated }} · 删除 {{ importPreview.deleted }} · 忽略 {{ importPreview.ignored }}
-        <button type="button" :disabled="pending" @click="confirmImport">确认合并备份</button>
-        <button type="button" @click="importData = null">取消导入</button>
+      <div class="unit-backup-actions">
+        <button type="button" class="text-action" :disabled="!hydrated || pending" @click="exportProgress">导出进度备份</button>
+        <label class="text-action text-action--file">导入进度备份<input type="file" accept="application/json,.json" :disabled="!hydrated || pending" @change="previewImport" /></label>
+        <template v-if="hasProgress">
+          <button type="button" class="text-action text-action--wrong" @click="requestReset">{{ resetArmed ? '确认清空全部进度' : '清空本地进度' }}</button>
+          <button v-if="resetArmed" type="button" class="text-action" @click="cancelReset">取消</button>
+        </template>
       </div>
-      <p v-if="notice" role="status">{{ notice }}</p>
+      <p class="unit-backup-note">备份按单元更新时间合并，相同时间保留本地记录；跨设备导入前请校准设备时钟。</p>
+      <div v-if="importPreview" class="unit-import-preview" role="status">
+        新增 {{ importPreview.added }} · 更新 {{ importPreview.updated }} · 删除 {{ importPreview.deleted }} · 忽略 {{ importPreview.ignored }}
+        <button type="button" class="nb-button nb-button--solid" :disabled="pending" @click="confirmImport">确认合并备份</button>
+        <button type="button" class="text-action" @click="importData = null">取消导入</button>
+      </div>
+      <p v-if="notice" class="unit-backup-notice" role="status"><NbText :text="notice" /></p>
     </div>
     <p v-if="migrationNotice" class="unit-notice" role="status">
-      旧版完成记录已迁移为“学习中”。请补答自测并完成证据清单，不会丢失原有单元位置。
+      旧版完成记录已迁移为“学习中<span class="nb-halt">”</span>。请补答自测并完成证据清单，不会丢失原有单元位置。
     </p>
     <p v-if="storageError" class="unit-notice unit-notice--warning" role="status">
       浏览器当前无法保存进度；本次页面内操作仍然有效，但尚未持久化，请导出备份。
     </p>
 
     <section class="unit-recommendations" aria-labelledby="unit-recommendations-heading">
-      <div>
-        <p class="unit-eyebrow">NEXT BEST STEP</p>
-        <h3 id="unit-recommendations-heading">根据依赖与复习时间推荐下一步</h3>
-      </div>
+      <h3 id="unit-recommendations-heading">根据依赖与复习时间推荐下一步</h3>
       <ol v-if="recommendations.length">
         <li v-for="recommendation in recommendations" :key="recommendation.unit.id">
-          <button type="button" @click="focusUnit(recommendation.unit.id)">
-            <strong>{{ recommendation.unit.title }}</strong>
-            <span>{{ recommendation.reason }}</span>
-          </button>
+          <button type="button" class="unit-jump" @click="focusUnit(recommendation.unit.id)"><NbText :text="recommendation.unit.title" /></button>
+          <span>{{ recommendation.reason }}</span>
         </li>
       </ol>
       <p v-else>所有学习单元都已验证，且当前没有到期复习。</p>
@@ -392,18 +361,18 @@ onBeforeUnmount(() => {
     <div class="unit-filters" aria-label="学习单元筛选">
       <label class="unit-search">
         <span>搜索</span>
-        <input v-model="query" type="search" placeholder="标题、分类、不变量或复杂度" />
+        <input v-model="query" class="nb-input" type="search" placeholder="标题、分类、不变量或复杂度" />
       </label>
       <label>
         <span>阶段</span>
-        <select v-model="stage">
+        <select v-model="stage" class="nb-input">
           <option value="all">全部阶段</option>
           <option v-for="(label, key) in stageLabels" :key="key" :value="key">{{ label }}</option>
         </select>
       </label>
       <label>
         <span>难度</span>
-        <select v-model="difficulty">
+        <select v-model="difficulty" class="nb-input">
           <option value="all">全部难度</option>
           <option value="入门">入门</option>
           <option value="进阶">进阶</option>
@@ -413,7 +382,7 @@ onBeforeUnmount(() => {
       </label>
       <label>
         <span>掌握状态</span>
-        <select v-model="statusFilter">
+        <select v-model="statusFilter" class="nb-input">
           <option value="all">全部状态</option>
           <option value="not-started">未开始</option>
           <option value="learning">学习中</option>
@@ -426,34 +395,43 @@ onBeforeUnmount(() => {
     <p class="unit-result-count" aria-live="polite">显示 {{ filteredUnits.length }} 个单元；顺序已按前置依赖校正。</p>
 
     <ol v-if="filteredUnits.length" class="unit-list">
-      <li v-for="unit in filteredUnits" :id="`unit-${unit.id}`" :key="unit.id" class="unit-item">
+      <li
+        v-for="unit in filteredUnits"
+        :id="`unit-${unit.id}`"
+        :key="unit.id"
+        class="unit-item nb-entry"
+        :data-record="isMastered(unit.id) ? 'done' : undefined"
+        :aria-current="stoppedId === unit.id ? 'step' : undefined"
+        :style="{ '--nb-fraction': unitFraction(unit.id) }"
+      >
         <article>
           <div class="unit-heading-row">
-            <div>
-              <p class="unit-meta">{{ unit.stageLabel }} · {{ unit.category }} · {{ unit.difficulty }}</p>
-              <h3 :id="`unit-title-${unit.id}`" tabindex="-1">{{ unit.title }}</h3>
+            <div class="unit-heading">
+              <h3 :id="`unit-title-${unit.id}`" tabindex="-1"><NbText :text="unit.title" /></h3>
+              <p class="unit-meta">{{ unit.stageLabel }} · <NbText :text="unit.category" /> · {{ unit.difficulty }}</p>
+              <p v-if="stoppedId === unit.id" class="nb-stopped">停在这里</p>
             </div>
             <div class="unit-status-actions">
-              <span class="unit-status" :class="`is-${statusOf(unit.id)}`">{{ statusLabel(unit.id) }}</span>
-              <button v-if="statusOf(unit.id) === 'not-started'" type="button" @click="startUnit(unit.id)">开始学习</button>
+              <span class="unit-status" :data-status="statusOf(unit.id)">{{ statusLabel(unit.id) }}</span>
+              <button v-if="statusOf(unit.id) === 'not-started'" type="button" class="nb-button" @click="startUnit(unit.id)">开始学习</button>
             </div>
           </div>
 
           <dl class="unit-facts">
             <div>
               <dt>核心不变量</dt>
-              <dd>{{ unit.invariant }}</dd>
+              <dd><NbText :text="unit.invariant" /></dd>
             </div>
             <div>
               <dt>复杂度边界</dt>
-              <dd>{{ unit.complexity }}</dd>
+              <dd><NbText :text="unit.complexity" /></dd>
             </div>
           </dl>
 
           <p v-if="unit.prerequisites.length" class="unit-prerequisites">
             <strong>前置：</strong>
             <template v-for="(id, index) in unit.prerequisites" :key="id">
-              <button type="button" class="unit-inline-link" @click="focusUnit(id)">{{ prerequisiteTitle(id) }}</button><span v-if="index < unit.prerequisites.length - 1">、</span>
+              <button type="button" class="unit-inline-link" @click="focusUnit(id)"><NbText :text="prerequisiteTitle(id)" /></button><span v-if="index < unit.prerequisites.length - 1">、</span>
             </template>
             <span v-if="!prerequisitesSatisfied(unit)" class="unit-prerequisite-warning"> · 尚未全部验证</span>
           </p>
@@ -465,16 +443,16 @@ onBeforeUnmount(() => {
               <p class="unit-mastery-note">这是本机自证流程，站点不会替你执行 C# 测试。请在仓库中完成任务后如实勾选。</p>
 
               <fieldset class="unit-quiz">
-                <legend>{{ mastery(unit).selfCheck.question }}</legend>
+                <legend><NbText :text="mastery(unit).selfCheck.question" /></legend>
                 <label v-for="(option, index) in mastery(unit).selfCheck.options" :key="option">
                   <input v-model="quizAnswers[unit.id]" type="radio" :name="`quiz-${unit.id}`" :value="index" @change="handleQuizChoice(unit.id)" />
-                  <span>{{ option }}</span>
+                  <span><NbText :text="option" /></span>
                 </label>
-                <button type="button" @click="submitSelfCheck(unit)">提交自测</button>
-                <p v-if="quizFeedback[unit.id]" class="unit-quiz-feedback" :class="`is-${quizFeedback[unit.id]}`" role="status" aria-live="polite">
+                <button type="button" class="nb-button" @click="submitSelfCheck(unit)">提交自测</button>
+                <p v-if="quizFeedback[unit.id]" class="unit-quiz-feedback" :data-verdict="quizFeedback[unit.id]" role="status" aria-live="polite">
                   <template v-if="quizFeedback[unit.id] === 'missing'">请先选择一个答案。</template>
-                  <template v-else-if="quizFeedback[unit.id] === 'correct'">回答正确。{{ mastery(unit).selfCheck.explanation }}</template>
-                  <template v-else>回答不正确。{{ mastery(unit).selfCheck.explanation }}</template>
+                  <template v-else-if="quizFeedback[unit.id] === 'correct'"><strong>回答正确。</strong><NbText :text="mastery(unit).selfCheck.explanation" /></template>
+                  <template v-else><strong>回答不正确。</strong><NbText :text="mastery(unit).selfCheck.explanation" /></template>
                 </p>
               </fieldset>
 
@@ -488,7 +466,7 @@ onBeforeUnmount(() => {
                   />
                   <span>
                     <strong>{{ evidenceId === 'invariant' ? '解释不变量' : evidenceId === 'test' ? '运行与扩展测试' : '迁移或反例' }}</strong>
-                    {{ mastery(unit).evidence[evidenceId] }}
+                    <NbText :text="mastery(unit).evidence[evidenceId]" />
                   </span>
                 </label>
               </fieldset>
@@ -497,7 +475,7 @@ onBeforeUnmount(() => {
                 <button
                   v-if="statusOf(unit.id) !== 'verified' && statusOf(unit.id) !== 'review'"
                   type="button"
-                  class="unit-verify"
+                  class="nb-button nb-button--solid unit-verify"
                   :disabled="!canVerify(unit.id)"
                   @click="verifyUnit(unit.id)"
                 >
@@ -506,7 +484,7 @@ onBeforeUnmount(() => {
                 <button
                   v-else-if="statusOf(unit.id) === 'review'"
                   type="button"
-                  class="unit-verify"
+                  class="nb-button nb-button--solid unit-verify"
                   :disabled="!canReview(unit.id)"
                   @click="completeReview(unit.id)"
                 >
@@ -515,7 +493,7 @@ onBeforeUnmount(() => {
                 <p v-if="statusOf(unit.id) === 'verified' && progressStore.units[unit.id]?.nextReviewAt">
                   下次复习：<time :datetime="new Date(progressStore.units[unit.id].nextReviewAt!).toISOString()">{{ formatDate(progressStore.units[unit.id].nextReviewAt) }}</time>
                 </p>
-                <button v-if="progressStore.units[unit.id]" type="button" class="unit-reset-one" @click="resetUnit(unit.id)">重置此单元</button>
+                <button v-if="progressStore.units[unit.id]" type="button" class="text-action text-action--wrong" @click="resetUnit(unit.id)">重置此单元</button>
               </div>
             </div>
           </details>
@@ -537,15 +515,15 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="unit-command">
-              <code>{{ unit.testCommand }}</code>
-              <button type="button" @click="copyCommand(unit)">{{ copiedId === unit.id ? '已复制' : copyFailedId === unit.id ? '复制失败' : '复制命令' }}</button>
+              <pre class="nb-command" tabindex="0" aria-label="测试命令"><code>{{ unit.testCommand }}</code></pre>
+              <button type="button" class="text-action" @click="copyCommand(unit)">{{ copiedId === unit.id ? '已复制' : copyFailedId === unit.id ? '复制失败' : '复制命令' }}</button>
             </div>
           </details>
 
-          <div class="unit-links">
+          <p class="unit-links">
             <a :href="withBase(unit.guide)">阅读指南</a>
             <a v-if="unit.trace" :href="withBase(`/追踪实验室?trace=${unit.trace}`)">打开 Trace</a>
-          </div>
+          </p>
         </article>
       </li>
     </ol>

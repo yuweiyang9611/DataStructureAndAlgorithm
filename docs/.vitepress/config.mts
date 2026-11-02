@@ -1,4 +1,6 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
+import { injectKitHead, notebookCodeTheme, notebookMarkdown, notebookShellColors } from './notebook.mts'
 
 const repository = 'https://github.com/yuweiyang9611/DataStructureAndAlgorithm'
 const siteDescription = '用 C# 14 系统学习数据结构、算法、测试方法与综合项目。'
@@ -25,9 +27,9 @@ export default defineConfig({
   description: siteDescription,
   base: '/DataStructureAndAlgorithm/',
   lastUpdated: true,
+  // kit/v1/theme.js owns day and night under the family's site-theme key; see theme/scheme.ts.
+  appearance: false,
   head: [
-    ['meta', { name: 'theme-color', content: '#07111f' }],
-    ['meta', { name: 'color-scheme', content: 'dark light' }],
     ['meta', { property: 'og:locale', content: 'zh_CN' }],
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/DataStructureAndAlgorithm/favicon.svg' }]
   ],
@@ -38,6 +40,24 @@ export default defineConfig({
       return ![...completeSourcePages].some((page) => url.endsWith(page.replace(/\.md$/, '.html')))
     })
   },
+  markdown: {
+    theme: notebookCodeTheme,
+    codeTransformers: [notebookShellColors],
+    config: notebookMarkdown
+  },
+  vite: {
+    // The dev server's pages; built pages get the same tags from transformHtml below. "post" keeps
+    // Vite from prefixing the base a second time.
+    plugins: [{ name: 'notebook-kit-head', transformIndexHtml: { order: 'post', handler: injectKitHead } }],
+    resolve: {
+      alias: [{
+        // Page contents with section numbers in their own column; see NbOutlineItem.vue.
+        find: /^.*\/VPDocOutlineItem\.vue$/,
+        replacement: fileURLToPath(new URL('./theme/components/NbOutlineItem.vue', import.meta.url))
+      }]
+    }
+  },
+  transformHtml: (html) => injectKitHead(html),
   transformHead({ pageData }) {
     const isHome = pageData.relativePath === 'index.md'
     const pageTitle = isHome
@@ -87,7 +107,9 @@ export default defineConfig({
           { text: 'P3 · 14 道高级专题', link: '/P3数论位运算与高级算法学习指导' }
         ]
       },
-      { text: '源码导航', link: '/源码导航' }
+      { text: '源码导航', link: '/源码导航' },
+      { text: 'GitHub', link: repository, noIcon: true },
+      { text: '全部项目', link: 'https://yuweiyang9611.github.io/', noIcon: true }
     ],
     sidebar: [
       {
@@ -189,9 +211,6 @@ export default defineConfig({
         }
       }
     },
-    socialLinks: [
-      { icon: 'github', link: repository }
-    ],
     editLink: {
       pattern: `${repository}/edit/main/docs/:path`,
       text: '在 GitHub 上改进本页'
@@ -213,9 +232,16 @@ export default defineConfig({
     },
     returnToTopLabel: '返回顶部',
     sidebarMenuLabel: '学习目录',
-    darkModeSwitchLabel: '切换主题',
-    lightModeSwitchTitle: '切换到浅色模式',
-    darkModeSwitchTitle: '切换到深色模式',
+    mobileMenuLabel: '菜单',
+    extraMenuLabel: '更多',
+    skipToContentLabel: '跳到主要内容',
+    notFound: {
+      code: '404',
+      title: '没有这个页面',
+      quote: '地址可能写错了，或者页面已经改名。',
+      linkLabel: '回到算法研习室',
+      linkText: '回到算法研习室'
+    },
     footer: {
       message: '教学实现用于理解不变量、复杂度与工程取舍。',
       copyright: 'DataStructureAndAlgorithm · C# 14 / .NET 10'
