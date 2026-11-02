@@ -67,7 +67,8 @@ test('the command to run shows whole on a desktop and the copy action stays clea
   expect(await command.evaluate((pre) => pre.scrollWidth <= pre.clientWidth)).toBe(true)
   const copy = page.locator('.desk-run').getByRole('button', { name: '复制命令' })
   const [box, action] = [await command.boundingBox(), await copy.boundingBox()]
-  expect(action!.y).toBeGreaterThanOrEqual(box!.y + box!.height)
+  // Firefox rounds subpixel boxes differently, so allow a pixel at the edge.
+  expect(action!.y).toBeGreaterThanOrEqual(box!.y + box!.height - 1)
 })
 
 test('numbered contents keep the number with its title and never cut a phrase', async ({ page }) => {
