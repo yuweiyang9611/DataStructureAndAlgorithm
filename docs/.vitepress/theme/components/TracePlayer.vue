@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { withBase } from 'vitepress'
+import NbText from './NbText'
 
 interface TraceEvent {
   step: number
@@ -263,7 +264,7 @@ onBeforeUnmount(() => {
     <div class="trace-selector">
       <label>
         <span>选择场景</span>
-        <select v-model="selectedId" :disabled="!manifest">
+        <select v-model="selectedId" class="nb-input" :disabled="!manifest">
           <option v-for="trace in manifest?.traces ?? []" :key="trace.id" :value="trace.id">
             {{ trace.title }} · {{ trace.eventCount }} 步
           </option>
@@ -271,7 +272,7 @@ onBeforeUnmount(() => {
       </label>
       <label>
         <span>阶段筛选</span>
-        <select v-model="selectedOperation" :disabled="loading || !payload">
+        <select v-model="selectedOperation" class="nb-input" :disabled="loading || !payload">
           <option value="all">全部操作</option>
           <option v-for="operation in operationOptions" :key="operation" :value="operation">{{ operation }}</option>
         </select>
@@ -279,25 +280,27 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-if="selectedTrace" class="trace-overview">
-      <div>
-        <p class="trace-eyebrow">{{ selectedTrace.category }} · {{ selectedTrace.level }} · SCHEMA V1</p>
-        <h2>{{ selectedTrace.title }}</h2>
-        <p>{{ selectedTrace.summary }}</p>
-      </div>
-      <div class="trace-overview-links">
-        <a :href="sourceUrl(selectedTrace.source)">查看实现</a>
-        <button type="button" @click="copyCommand">{{ copyStatus === 'success' ? '命令已复制' : copyStatus === 'error' ? '复制失败' : '复制运行命令' }}</button>
+      <h2><NbText :text="selectedTrace.title" /></h2>
+      <p class="trace-meta">{{ selectedTrace.category }} · {{ selectedTrace.level }} · {{ selectedTrace.eventCount }} 步</p>
+      <p class="trace-summary"><NbText :text="selectedTrace.summary" /></p>
+      <div class="trace-run">
+        <div class="trace-run-bar">
+          <span class="trace-run-label">生成这段 Trace 的命令</span>
+          <button type="button" class="text-action" @click="copyCommand">{{ copyStatus === 'success' ? '命令已复制' : copyStatus === 'error' ? '复制失败' : '复制运行命令' }}</button>
+          <a class="text-action" :href="sourceUrl(selectedTrace.source)">查看实现</a>
+        </div>
+        <pre class="nb-command" tabindex="0" aria-label="运行命令"><code>{{ selectedTrace.command }}</code></pre>
       </div>
     </div>
 
     <p v-if="loading" class="trace-message" aria-live="polite">正在加载 Trace…</p>
-    <div v-else-if="error" class="trace-message trace-error" role="alert">{{ error }} <button type="button" @click="retry">重新加载</button></div>
+    <div v-else-if="error" class="trace-message trace-error" role="alert"><NbText :text="error" /> <button type="button" class="nb-button" @click="retry">重新加载</button></div>
 
     <template v-else-if="currentEvent">
       <div class="trace-controls">
-        <button type="button" :disabled="eventIndex === 0" aria-label="上一步" @click="previous">← 上一步</button>
-        <button type="button" class="trace-play" @click="togglePlay">{{ playing ? '暂停' : '播放' }}</button>
-        <button type="button" :disabled="eventIndex >= visibleEvents.length - 1" aria-label="下一步" @click="next">下一步 →</button>
+        <button type="button" class="nb-button" :disabled="eventIndex === 0" aria-label="上一步" @click="previous">上一步</button>
+        <button type="button" class="nb-button nb-button--solid trace-play" @click="togglePlay">{{ playing ? '暂停' : '播放' }}</button>
+        <button type="button" class="nb-button" :disabled="eventIndex >= visibleEvents.length - 1" aria-label="下一步" @click="next">下一步</button>
         <label class="trace-scrubber">
           <span>{{ progressLabel }}</span>
           <input v-model.number="eventIndex" type="range" min="0" :max="Math.max(0, visibleEvents.length - 1)" step="1" aria-label="选择 Trace 步骤" @input="stop" />
@@ -305,15 +308,15 @@ onBeforeUnmount(() => {
       </div>
 
       <article class="trace-event">
-        <p class="sr-only" aria-live="polite" aria-atomic="true">第 {{ currentEvent.step }} 步：{{ currentEvent.description }}</p>
+        <p class="sr-only" aria-live="polite" aria-atomic="true">第 {{ currentEvent.step }} 步：<NbText :text="currentEvent.description" /></p>
         <header>
-          <span class="trace-step">STEP {{ currentEvent.step }}</span>
-          <span class="trace-operation">{{ currentEvent.operation }}</span>
-          <h3>{{ currentEvent.description }}</h3>
+          <span class="trace-step">第 {{ currentEvent.step }} 步</span>
+          <code class="trace-operation">{{ currentEvent.operation }}</code>
+          <h3><NbText :text="currentEvent.description" /></h3>
         </header>
 
         <div v-if="stateRows.length" class="trace-state">
-          <div v-for="row in stateRows" :key="row.key" class="trace-state-row" :class="`is-${row.status}`">
+          <div v-for="row in stateRows" :key="row.key" class="trace-state-row" :data-status="row.status">
             <div class="trace-state-key">
               <code>{{ row.key }}</code>
               <span>{{ row.status === 'added' ? '新增' : row.status === 'changed' ? '改变' : row.status === 'unchanged' ? '未变' : '本步未提供' }}</span>
@@ -322,26 +325,26 @@ onBeforeUnmount(() => {
               <li v-for="(item, index) in splitSequence(row.key, row.currentValue)" :key="`${item}-${index}`" :class="{ changed: itemChanged(row.key, row.currentValue, row.previousValue, index) }">{{ item }}</li>
             </ol>
             <div v-else class="trace-state-value">
-              <strong>{{ row.currentValue || '—' }}</strong>
-              <small v-if="row.status === 'changed'">上一步：{{ row.previousValue }}</small>
+              <strong><NbText :text="row.currentValue || '—'" /></strong>
+              <small v-if="row.status === 'changed'">上一步：<NbText :text="row.previousValue" /></small>
             </div>
           </div>
         </div>
-        <div v-else class="trace-empty-state">此事件没有状态字段；这不是加载错误。</div>
+        <p v-else class="trace-empty-state">此事件没有状态字段；这不是加载错误。</p>
       </article>
 
-      <p class="trace-contract-note">状态是每一步的局部快照；某个键缺失表示“本步未提供”，不表示该状态已删除。</p>
+      <p class="trace-contract-note">状态是每一步的局部快照；某个键缺失表示“本步未提供<span class="nb-halt">”</span>，不表示该状态已删除。</p>
 
       <details class="trace-raw">
         <summary>查看当前事件原始 JSON</summary>
-        <pre><code>{{ JSON.stringify(currentEvent, null, 2) }}</code></pre>
+        <pre tabindex="0"><code>{{ JSON.stringify(currentEvent, null, 2) }}</code></pre>
       </details>
       <details class="trace-raw">
         <summary>查看场景结果 JSON</summary>
-        <pre><code>{{ JSON.stringify(payload?.result, null, 2) }}</code></pre>
+        <pre tabindex="0"><code>{{ JSON.stringify(payload?.result, null, 2) }}</code></pre>
       </details>
     </template>
 
-    <div v-else-if="!loading && !error" class="trace-message">当前筛选没有事件。</div>
+    <p v-else-if="!loading && !error" class="trace-message">当前筛选没有事件。</p>
   </section>
 </template>

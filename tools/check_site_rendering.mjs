@@ -127,6 +127,8 @@ for (const [pagePath, html] of htmlByRelativePath) {
     }
 
     if (resolvedUrl.origin !== siteOrigin) continue
+    // The family's project index lives at the origin root, outside this site's base.
+    if (resolvedUrl.href === `${siteOrigin}/`) continue
     if (!resolvedUrl.pathname.startsWith(siteBase)) {
       errors.push(`${pagePath}: internal URL escapes site base: ${rawTarget}`)
       continue
@@ -162,10 +164,45 @@ for (const [pagePath, html] of htmlByRelativePath) {
   }
 }
 
+// The opening screen: the continue link first, then the register of units on the record line.
 const homepage = htmlByRelativePath.get('index.html') ?? ''
-for (const className of ['learning-path', 'learning-topic-grid', 'learning-projects', 'learning-evidence', 'learning-cta']) {
-  if (!homepage.includes(`class="${className}"`)) errors.push(`index.html: missing rendered layout ${className}`)
+for (const className of ['course-home', 'desk', 'continue-learning', 'record-track', 'nb-command', 'rows unit-register']) {
+  if (!new RegExp(`class="${escapeRegExp(className)}[" ]`).test(homepage)) errors.push(`index.html: missing rendered layout ${className}`)
   if (homepage.includes(`&quot;${className}&quot;`)) errors.push(`index.html: ${className} rendered as text`)
+}
+if (homepage.indexOf('class="continue-learning') > homepage.indexOf('class="rows unit-register"')) {
+  errors.push('index.html: the continue link must come before the register')
+}
+for (const unit of learningUnits) {
+  if (!homepage.includes(`data-unit="${unit.id}"`)) errors.push(`index.html: register is missing unit ${unit.id}`)
+}
+// The server render has no record, so it must show no tick, no 停在这里 and no solid line.
+if (/<li\b[^>]*\baria-current=/.test(homepage) || homepage.includes('data-record="done"') || homepage.includes('停在这里')) {
+  errors.push('index.html: the server render shows a record mark without a record')
+}
+if (/\bclass="[^"]*\bVPHero\b|\bclass="[^"]*\bVPFeatures?\b/.test(homepage)) errors.push('index.html: the home hero or feature cards are back')
+
+// kit/v1/theme.js squeezes a curly quote beside a comma or full stop by replacing text nodes.
+// Vue owns the text of these pages, so the build must emit the `.nb-halt` spans itself and leave
+// nothing for the runtime pass to change. Each text run between tags is one DOM text node.
+const looseMarks = /[”’][，。、；：？！]|[，。、；：？！][“‘]/
+const skippedElements = new Set(['code', 'kbd', 'pre', 'samp', 'script', 'style', 'textarea', 'svg', 'title'])
+for (const [pagePath, html] of htmlByRelativePath) {
+  const body = html.slice(html.indexOf('<body'))
+  const open = []
+  let loose = 0
+  for (const part of body.split(/(<[^>]+>)/)) {
+    if (part.startsWith('<!--')) continue
+    const tag = part.match(/^<(\/?)([a-zA-Z][\w-]*)/)
+    if (tag) {
+      const name = tag[2].toLowerCase()
+      if (!skippedElements.has(name) || part.endsWith('/>')) continue
+      if (tag[1]) { if (open.at(-1) === name) open.pop() } else open.push(name)
+      continue
+    }
+    if (!open.length && looseMarks.test(decodeHtml(part))) loose += 1
+  }
+  if (loose) errors.push(`${pagePath}: ${loose} text run(s) still hold touching marks for theme.js to replace`)
 }
 
 const moduleExpectations = [
@@ -369,7 +406,8 @@ for (const unit of learningUnits) {
   if (quiz.options.length !== 4 || new Set(quiz.options).size !== 4 || !Number.isInteger(quiz.correctIndex) || quiz.correctIndex < 0 || quiz.correctIndex > 3 || typeof quiz.explanation !== 'string' || !quiz.explanation.trim()) errors.push('Invalid quiz: '+unit.id)
   const start = learningUnitHtml.indexOf('id="unit-'+unit.id+'"')
   const end = learningUnitHtml.indexOf('</li>',start)
-  const rendered = decodeHtml(learningUnitHtml.slice(start,end))
+  // A squeezed mark is wrapped in `.nb-halt`; the text itself must still be there in full.
+  const rendered = decodeHtml(learningUnitHtml.slice(start,end).replace(/<span class="nb-halt">(.)<\/span>/g, '$1').replace(/<!--[\[\]]-->/g, ''))
   for (const text of [quiz.question,...quiz.options,...masteryEvidenceIds.map(id=>content.evidence[id])]) {
     if (!text?.trim() || !rendered.includes(text)) errors.push('Missing rendered content: '+unit.id)
   }
