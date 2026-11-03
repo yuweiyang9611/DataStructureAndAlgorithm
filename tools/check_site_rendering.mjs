@@ -164,17 +164,26 @@ for (const [pagePath, html] of htmlByRelativePath) {
   }
 }
 
-// The opening screen: the continue link first, then the register of units on the record line.
+// The opening screen: the masthead figures, the banner with the continue link, the command, then the
+// register of units as cards with a ring each.
 const homepage = htmlByRelativePath.get('index.html') ?? ''
-for (const className of ['course-home', 'desk', 'continue-learning', 'record-track', 'nb-command', 'rows unit-register']) {
+for (const className of ['course-home', 'desk', 'nb-stat', 'resume nb-banner', 'continue-learning', 'record-track nb-bar', 'nb-command', 'nb-chip', 'unit-register nb-grid', 'unit-card nb-card', 'nb-card-head', 'nb-ring', 'nb-card-body', 'nb-card-meta']) {
   if (!new RegExp(`class="${escapeRegExp(className)}[" ]`).test(homepage)) errors.push(`index.html: missing rendered layout ${className}`)
   if (homepage.includes(`&quot;${className}&quot;`)) errors.push(`index.html: ${className} rendered as text`)
 }
-if (homepage.indexOf('class="continue-learning') > homepage.indexOf('class="rows unit-register"')) {
+if (homepage.indexOf('class="continue-learning') > homepage.indexOf('class="unit-register nb-grid"')) {
   errors.push('index.html: the continue link must come before the register')
 }
 for (const unit of learningUnits) {
-  if (!homepage.includes(`data-unit="${unit.id}"`)) errors.push(`index.html: register is missing unit ${unit.id}`)
+  const card = homepage.match(new RegExp(`<li\\b[^>]*\\bdata-unit="${escapeRegExp(unit.id)}"[^>]*>`))?.[0]
+  if (!card) errors.push(`index.html: register is missing unit ${unit.id}`)
+  else if (!/\bdata-hue="(?:green|cyan|blue|purple|ink)"/.test(card)) errors.push(`index.html: card ${unit.id} has no hue`)
+}
+// Every ring carries its figure in words, and without a record every ring is at 0%.
+const rings = [...homepage.matchAll(/<div class="nb-ring"[^>]*>/g)]
+if (rings.length !== learningUnits.length) errors.push(`index.html: expected ${learningUnits.length} progress rings, found ${rings.length}`)
+for (const ring of rings) {
+  if (!/\baria-label="完成 0%"/.test(ring[0])) errors.push('index.html: a ring on the server render is not at 完成 0%')
 }
 // The server render has no record, so it must show no tick, no 停在这里 and no solid line.
 if (/<li\b[^>]*\baria-current=/.test(homepage) || homepage.includes('data-record="done"') || homepage.includes('停在这里')) {

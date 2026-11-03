@@ -4,6 +4,7 @@ import { useData, type Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme-without-fonts'
 import CourseHome from './components/CourseHome.vue'
 import LearningUnitExplorer from './components/LearningUnitExplorer.vue'
+import NbGuideBand from './components/NbGuideBand.vue'
 import NbScheme from './components/NbScheme.vue'
 import TracePlayer from './components/TracePlayer.vue'
 import { bridgeScheme } from './scheme'
@@ -14,7 +15,9 @@ import './custom.css'
 export default {
   extends: DefaultTheme,
   Layout: () => h(DefaultTheme.Layout, null, {
-    'nav-bar-content-after': () => h(NbScheme)
+    'nav-bar-content-after': () => h(NbScheme),
+    // A guide page that teaches learning units opens with a band in its track's hue.
+    'doc-before': () => h(NbGuideBand)
   }),
   enhanceApp({ app }) {
     app.component('CourseHome', CourseHome)

@@ -13,6 +13,7 @@ import { emptyStore, applyAction, statusOf as progressStatus, canVerify as progr
 import { parseBackupJson } from '../../data/backupJson.ts'
 import { ProgressRepository, StaleProgressError } from '../../data/progressRepository.ts'
 import { orderedUnits, readCourse, stepsDone, unitSteps } from '../../data/record.ts'
+import { hueOf } from '../hues.ts'
 import NbText from './NbText'
 type QuizFeedback = 'correct' | 'incorrect' | 'missing'
 const unitById = new Map(learningUnits.map((unit) => [unit.id, unit]))
@@ -144,6 +145,8 @@ const stoppedId = computed(() => {
   return course.hasRecord && course.kind !== 'complete' ? course.unit?.id : undefined
 })
 function unitFraction(id: string) { return stepsDone(progressStore.value.units[id], now.value) / unitSteps }
+// The band at the top takes the hue of the unit to continue with, so it matches the card on the opening screen.
+const bandHue = computed(() => hueOf(readCourse(progressStore.value, now.value).unit ?? orderedUnits[0]))
 
 const filteredUnits = computed(() => {
   const needle = query.value.trim().toLocaleLowerCase('zh-CN')
@@ -308,18 +311,21 @@ onBeforeUnmount(() => {
 <template>
   <section class="unit-explorer" :data-ready="hydrated" :inert="!hydrated" aria-labelledby="unit-explorer-heading">
     <div class="unit-progress">
+      <div class="unit-band nb-band" :data-hue="bandHue">
+        <p class="nb-band-eyebrow unit-progress-copy" aria-live="polite">
+          学习单元 · 已验证 <strong>{{ verifiedCount }} / {{ learningUnits.length }}</strong> · {{ progressPercent }}%<template v-if="dueCount"> · {{ dueCount }} 个待复习</template>
+        </p>
+        <div
+          class="record-track nb-bar nb-bar--on-fill"
+          role="progressbar"
+          aria-label="已验证学习单元"
+          aria-valuemin="0"
+          :aria-valuemax="learningUnits.length"
+          :aria-valuenow="verifiedCount"
+          :style="{ '--nb-fraction': verifiedCount / learningUnits.length }"
+        ><span /></div>
+      </div>
       <h2 id="unit-explorer-heading">22 个可验证学习单元</h2>
-      <div
-        class="record-track"
-        role="progressbar"
-        aria-label="已验证学习单元"
-        aria-valuemin="0"
-        :aria-valuemax="learningUnits.length"
-        :aria-valuenow="verifiedCount"
-      ><span :style="{ transform: `scaleX(${verifiedCount / learningUnits.length})` }" /></div>
-      <p class="unit-progress-copy" aria-live="polite">
-        <strong>{{ verifiedCount }} / {{ learningUnits.length }}</strong> 已验证 · {{ progressPercent }}%<template v-if="dueCount"> · {{ dueCount }} 个待复习</template>
-      </p>
       <p class="unit-progress-note">进度只保存在当前浏览器。自测答对并完成不变量、测试和迁移三类证据后，单元才会标记为“已验证<span class="nb-halt">”</span>。</p>
     </div>
 
