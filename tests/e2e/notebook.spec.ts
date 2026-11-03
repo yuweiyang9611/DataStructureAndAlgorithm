@@ -57,6 +57,16 @@ test('the opening screen continues from the record and shows no mark without one
   await expect(stopped.getByText('停在这里')).toBeVisible()
   await expect(page.locator('.record-track')).toHaveAttribute('aria-valuenow', '0')
   await expect(page.locator('.record-copy')).toContainText('0 / 22 已验证')
+  // The stopped card carries its hue, and its ring says in words how far the unit has gone.
+  await expect(stopped).toHaveAttribute('data-hue', 'cyan')
+  await expect(stopped.locator('.nb-ring')).toHaveAttribute('aria-label', '完成 0%')
+  await expect(stopped.locator('.unit-state')).toContainText('0 / 3 类验证')
+  // The chips filter the register by track without touching the record.
+  await page.getByRole('button', { name: /^项目/ }).click()
+  await expect(page.locator('.unit-register > li:not([hidden])')).toHaveCount(4)
+  await expect(page.locator('.unit-register > [data-unit="core-sorting"]')).toBeHidden()
+  await page.getByRole('button', { name: /^全部/ }).click()
+  await expect(page.locator('.unit-register > li:not([hidden])')).toHaveCount(22)
 })
 
 test('the command to run shows whole on a desktop and the copy action stays clear of it', async ({ page }) => {

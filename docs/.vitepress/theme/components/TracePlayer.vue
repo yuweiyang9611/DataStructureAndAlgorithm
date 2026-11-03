@@ -280,8 +280,14 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-if="selectedTrace" class="trace-overview">
+      <div class="trace-band nb-band" data-hue="cyan">
+        <p class="trace-meta nb-band-eyebrow">{{ selectedTrace.category }} · {{ selectedTrace.level }} · {{ selectedTrace.eventCount }} 步</p>
+        <div class="nb-band-progress">
+          <p>播放到第 <strong>{{ currentEvent ? eventIndex + 1 : 0 }} / {{ visibleEvents.length }}</strong> 步</p>
+          <div class="nb-bar nb-bar--on-fill" role="progressbar" aria-label="Trace 播放进度" aria-valuemin="0" :aria-valuemax="visibleEvents.length" :aria-valuenow="currentEvent ? eventIndex + 1 : 0" :style="{ '--nb-fraction': visibleEvents.length ? (currentEvent ? eventIndex + 1 : 0) / visibleEvents.length : 0 }"><span /></div>
+        </div>
+      </div>
       <h2><NbText :text="selectedTrace.title" /></h2>
-      <p class="trace-meta">{{ selectedTrace.category }} · {{ selectedTrace.level }} · {{ selectedTrace.eventCount }} 步</p>
       <p class="trace-summary"><NbText :text="selectedTrace.summary" /></p>
       <div class="trace-run">
         <div class="trace-run-bar">
