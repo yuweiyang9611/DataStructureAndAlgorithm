@@ -100,6 +100,9 @@ test('the Trace lab links the implementation on the site', async ({ page }) => {
   await expect(page.getByRole('link', { name: '查看实现' })).toHaveAttribute('href', /^\/DataStructureAndAlgorithm\/源码\.html\?path=/)
 })
 
+// Against the viewport and the root's client width both, so a scrollbar that takes width cannot mask an overflow.
+const fitsViewport = () => document.documentElement.scrollWidth <= Math.min(window.innerWidth, document.documentElement.clientWidth)
+
 test('the panel scrolls inside itself on a phone and the page never scrolls sideways', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('学习单元.html')
@@ -109,14 +112,18 @@ test('the panel scrolls inside itself on a phone and the page never scrolls side
   const view = unit.locator('.source-panel .nb-code-view')
   await expect(unit.locator('.source-panel .nb-code-line').first()).toBeVisible()
   expect(await view.evaluate((pre) => pre.scrollWidth > pre.clientWidth)).toBe(true)
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  expect(await page.evaluate(fitsViewport)).toBe(true)
 
-  await page.goto('源码.html?path=DataStructureAndAlgorithm%2FTree%2FAvlTree.cs')
-  await expect(page.locator('.source-page-panel .nb-code-line').first()).toBeVisible()
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  // A file with long sibling names, and one in a long-named project: every path breaks instead of widening the page.
+  for (const path of ['DataStructureAndAlgorithm/Tree/AvlTree.cs', 'DataStructureAndAlgorithm.Scenarios.ProjectScheduling/ProjectScheduler.cs']) {
+    await page.goto(`源码.html?path=${encodeURIComponent(path)}`)
+    await expect(page.locator('.source-page-panel .nb-code-line').first()).toBeVisible()
+    await expect(page.locator('.source-siblings li').first()).toBeVisible()
+    expect(await page.evaluate(fitsViewport), path).toBe(true)
+  }
   await page.goto('源码.html?dir=DataStructureAndAlgorithm.Test%2FIntegratedProjectsTest')
   await expect(page.locator('.source-row').first()).toBeVisible()
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  expect(await page.evaluate(fitsViewport)).toBe(true)
 })
 
 test('no built page sends the reader to GitHub for a bundled file or folder', () => {

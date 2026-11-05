@@ -1029,10 +1029,11 @@ body { font-synthesis: none; }
 .vp-doc .nb-code-tabs > .nb-code-tab { margin: 0; }
 
 .source-browser { min-width: 0; }
-.vp-doc .source-crumbs { margin: 0; color: var(--nb-ink-soft); font-size: .875rem; overflow-wrap: anywhere; }
+/* Paths and file names are one long word each: they break anywhere rather than widen a phone's page. */
+.vp-doc .source-crumbs { margin: 0; color: var(--nb-ink-soft); font-size: .875rem; overflow-wrap: anywhere; word-break: break-all; }
 .source-crumb-rule { margin: 0 .375rem; color: var(--nb-ink-soft); }
 .source-crumb-here { color: var(--nb-ink); }
-.vp-doc .source-title { margin: .25rem 0 0; overflow-wrap: anywhere; }
+.vp-doc .source-title { margin: .25rem 0 0; overflow-wrap: anywhere; word-break: break-all; }
 .vp-doc .source-note { max-width: var(--nb-measure); margin: .5rem 0 1.25rem; color: var(--nb-ink-soft); overflow-wrap: anywhere; }
 .vp-doc .source-error { margin: 0 0 1rem; color: var(--nb-wrong); }
 .vp-doc .source-rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--nb-rule-bold); }
@@ -1044,6 +1045,6 @@ body { font-synthesis: none; }
 .source-siblings { margin-top: 1.5rem; }
 .vp-doc .source-siblings-title { margin: 0 0 .375rem; padding: 0; border: 0; font-size: 1rem; }
 .vp-doc .source-siblings ul { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin: 0; padding: 0; list-style: none; font-family: var(--nb-mono); font-size: .875rem; }
-.vp-doc .source-siblings li { margin: 0; }
-.vp-doc .source-siblings a { display: inline-flex; align-items: center; min-height: 2.25rem; }
+.vp-doc .source-siblings li { min-width: 0; max-width: 100%; margin: 0; }
+.vp-doc .source-siblings a { display: inline-flex; align-items: center; min-height: 2.25rem; overflow-wrap: anywhere; word-break: break-all; }
 .vp-doc .source-foot, .vp-doc .source-empty { margin: 1.5rem 0 0; color: var(--nb-ink-soft); font-size: .875rem; }
