@@ -222,7 +222,8 @@ const moduleExpectations = [
   ['进阶/十八周学习计划与验收.html', ['第 1–8 周核心阶段验收', '第 13–18 周学习顺序', '第 9–18 周验收']],
   ['综合项目/工程原则与证据链.html', ['四个项目共同的 C# 实践', '持续可证明的证据链']],
   ['学习单元.html', ['class="unit-explorer"', '22 个可验证学习单元', '根据依赖与复习时间推荐下一步', '掌握验证：自测 + 三类证据', 'class="unit-quiz"', 'class="unit-evidence"']],
-  ['追踪实验室.html', ['class="trace-lab"']]
+  ['追踪实验室.html', ['class="trace-lab"']],
+  ['源码.html', ['class="source-browser"', 'id="source-title"', 'class="source-crumbs"']]
 ]
 
 for (const [pagePath, sentinels] of moduleExpectations) {
@@ -244,7 +245,7 @@ for (const [pagePath, sentinels] of moduleExpectations) {
   }
 }
 
-for (const asset of ['robots.txt', 'favicon.svg', 'og.png', 'traces/manifest.json']) {
+for (const asset of ['robots.txt', 'favicon.svg', 'og.png', 'traces/manifest.json', 'source/index.json']) {
   if (!existsSync(join(outputRoot, asset))) errors.push(`missing public asset ${asset}`)
 }
 
@@ -319,11 +320,14 @@ if (existsSync(join(traceDirectory, 'manifest.json'))) {
   }
 }
 
-for (const sourcePage of [
+// The complete single pages and the source page (one URL for every bundled file) stay out of the index.
+const noindexPages = [
   'CSharp数据结构与算法学习指导.html',
   'CSharp数据结构与算法进阶学习指导.html',
-  '综合项目实战学习指导.html'
-]) {
+  '综合项目实战学习指导.html',
+  '源码.html'
+]
+for (const sourcePage of noindexPages) {
   const html = htmlByRelativePath.get(sourcePage) ?? ''
   if (!/<meta\s+name="robots"\s+content="noindex, follow"/i.test(html)) {
     errors.push(`${sourcePage}: complete source page must be noindex, follow`)
@@ -335,11 +339,7 @@ const sitemapLocations = new Set(
   [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])
 )
 const sitemapBase = `${siteOrigin}${siteBase}`
-for (const sourcePage of [
-  'CSharp数据结构与算法学习指导.html',
-  'CSharp数据结构与算法进阶学习指导.html',
-  '综合项目实战学习指导.html'
-]) {
+for (const sourcePage of noindexPages) {
   if (sitemapLocations.has(new URL(sourcePage, sitemapBase).href)) {
     errors.push(`sitemap.xml: noindex source page must be excluded: ${sourcePage}`)
   }
@@ -423,6 +423,59 @@ for (const unit of learningUnits) {
 }
 if (!Number.isInteger(masteryRevision) || masteryRevision < 1 || Object.keys(masteryByUnitId).length !== learningUnits.length) errors.push('Invalid mastery data')
 
+// Source read in place: the bundle and its index exist, every file a unit or a Trace names is in it, each
+// unit carries a server-rendered panel, and no page sends the reader to GitHub for a file or folder the
+// site carries. The panel's own GitHub link appears after hydration and a <noscript> may link GitHub,
+// so only the rest of the HTML is held to that rule.
+const sourceDirectory = join(outputRoot, 'source')
+const sourceIndexPath = join(sourceDirectory, 'index.json')
+const bundledSourcePaths = new Set()
+if (existsSync(sourceIndexPath)) {
+  const sourceIndex = JSON.parse(readFileSync(sourceIndexPath, 'utf8'))
+  if (sourceIndex.version !== 1 || !/^[0-9a-f]{40}$/.test(sourceIndex.revision ?? '') || typeof sourceIndex.blobBase !== 'string' || !Array.isArray(sourceIndex.files)) {
+    errors.push('source/index.json: expected version 1, a 40-hex revision, blobBase and files')
+  } else {
+    if (sourceIndex.files.length < 200) errors.push(`source/index.json: expected the course files (at least 200), found ${sourceIndex.files.length}`)
+    for (const entry of sourceIndex.files) {
+      if (typeof entry.path !== 'string' || !Number.isInteger(entry.bytes) || !Number.isInteger(entry.lines) || bundledSourcePaths.has(entry.path)) {
+        errors.push(`source/index.json: invalid or duplicate entry ${entry.path}`)
+        continue
+      }
+      bundledSourcePaths.add(entry.path)
+      if (!existsSync(join(sourceDirectory, `${entry.path}.txt`))) errors.push(`source/: missing bundled file ${entry.path}`)
+    }
+    for (const path of walk(sourceDirectory, '.txt')) {
+      const bundledPath = relative(sourceDirectory, path).split(sep).join('/').replace(/\.txt$/, '')
+      if (!bundledSourcePaths.has(bundledPath)) errors.push(`source/: stray bundled file ${bundledPath}`)
+    }
+    for (const unit of learningUnits) {
+      for (const path of [...unit.sources, ...unit.tests]) {
+        if (!bundledSourcePaths.has(path)) errors.push(`unit ${unit.id} needs a file outside the source bundle: ${path}`)
+      }
+    }
+    if (existsSync(join(traceDirectory, 'manifest.json'))) {
+      for (const definition of JSON.parse(readFileSync(join(traceDirectory, 'manifest.json'), 'utf8')).traces ?? []) {
+        if (!bundledSourcePaths.has(definition.source)) errors.push(`trace ${definition.id} needs a file outside the source bundle: ${definition.source}`)
+      }
+    }
+  }
+}
+const unitPanelCount = [...learningUnitHtml.matchAll(/class="nb-code source-panel unit-source"/g)].length
+if (unitPanelCount !== learningUnits.length) errors.push(`学习单元.html: expected ${learningUnits.length} source panels, found ${unitPanelCount}`)
+if (learningUnitHtml.includes('class="nb-code-link"')) errors.push('学习单元.html: the panel GitHub link must be added after hydration, not server-rendered')
+const repositoryLinks = /\bhref="https:\/\/github\.com\/yuweiyang9611\/DataStructureAndAlgorithm\/(blob|tree)\/[^/"]+\/([^"#?]+)/g
+for (const [pagePath, html] of htmlByRelativePath) {
+  const checked = html.replace(/<noscript>[\s\S]*?<\/noscript>/g, '')
+  for (const match of checked.matchAll(repositoryLinks)) {
+    let target
+    try { target = decodeURIComponent(decodeHtml(match[2])).replace(/\/+$/, '') } catch { continue }
+    const bundled = match[1] === 'blob'
+      ? bundledSourcePaths.has(target)
+      : [...bundledSourcePaths].some((path) => path.startsWith(`${target}/`))
+    if (bundled) errors.push(`${pagePath}: sends the reader to GitHub for bundled ${match[1] === 'blob' ? 'file' : 'folder'} ${target}`)
+  }
+}
+
 if (reviewIntervals.length !== 3 || reviewIntervals.some((interval, index) => !Number.isFinite(interval) || interval <= 0 || (index > 0 && interval <= reviewIntervals[index - 1]))) errors.push('Invalid review intervals')
 
 if (errors.length) {
@@ -432,4 +485,4 @@ if (errors.length) {
   process.exit(1)
 }
 
-console.log(`Verified ${htmlFiles.length} HTML pages, internal targets, metadata, mastery data, module structure and six Trace assets.`)
+console.log(`Verified ${htmlFiles.length} HTML pages, internal targets, metadata, mastery data, module structure, six Trace assets and ${bundledSourcePaths.size} bundled source files.`)

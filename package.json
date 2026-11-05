@@ -6,9 +6,10 @@
     "node": ">=24"
   },
   "scripts": {
-    "docs:dev": "vitepress dev docs --host 127.0.0.1",
+    "docs:dev": "npm run docs:source && vitepress dev docs --host 127.0.0.1",
     "docs:traces": "node tools/generate_site_traces.mjs",
-    "docs:build": "vitepress build docs && npm run docs:check-render",
+    "docs:source": "node tools/bundle_site_source.mjs",
+    "docs:build": "npm run docs:source && vitepress build docs && npm run docs:check-render",
     "docs:check-render": "node tools/check_site_rendering.mjs",
     "docs:preview": "vitepress preview docs --host 127.0.0.1",
     "docs:test": "node --test tests/site/*.test.ts",

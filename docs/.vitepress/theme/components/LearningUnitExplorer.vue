@@ -7,7 +7,9 @@ import {
   masteryRevision,
   type MasteryEvidenceId
 } from '../../data/masteryContent'
-import { learningUnits, repository, stageLabels, type LearningUnit } from '../../data/learningUnits'
+import { learningUnits, stageLabels, type LearningUnit } from '../../data/learningUnits'
+import { sourceHref } from '../sourceBundle'
+import SourcePanel, { type SourcePanelFile } from './SourcePanel.vue'
 
 import { emptyStore, applyAction, statusOf as progressStatus, canVerify as progressCanVerify, canReview as progressCanReview, migrateLegacy, parseBackup, exportBackup, mergeBackup, type ProgressAction, type ImportData } from '../../data/progress.ts'
 import { parseBackupJson } from '../../data/backupJson.ts'
@@ -257,9 +259,19 @@ async function focusUnit(id: string) {
   document.getElementById(`unit-title-${id}`)?.focus({ preventScroll: true })
 }
 
+// Source read in place: every file a unit names is in the site's bundle, so the links stay on the site.
 function sourceUrl(path: string) {
-  const encoded = path.split('/').map(encodeURIComponent).join('/')
-  return `${repository}/blob/main/${encoded}`
+  return withBase(sourceHref(path))
+}
+
+// The panel in a unit shows its first implementation file and its first test file. It fetches nothing
+// until the details element opens, so the page does not load 44 files on arrival.
+const resourcesOpen = ref<Record<string, boolean>>({})
+function handleResourcesToggle(id: string, event: Event) {
+  resourcesOpen.value = { ...resourcesOpen.value, [id]: (event.target as HTMLDetailsElement).open }
+}
+function panelFiles(unit: LearningUnit): SourcePanelFile[] {
+  return [unit.sources[0], unit.tests[0]].filter((path): path is string => !!path).map((path) => ({ path }))
 }
 
 async function copyCommand(unit: LearningUnit) {
@@ -504,8 +516,9 @@ onBeforeUnmount(() => {
             </div>
           </details>
 
-          <details class="unit-resources">
+          <details class="unit-resources" @toggle="handleResourcesToggle(unit.id, $event)">
             <summary>源码、测试与运行命令</summary>
+            <SourcePanel class="unit-source" :files="panelFiles(unit)" :deferred="!resourcesOpen[unit.id]" />
             <div class="unit-resource-grid">
               <div>
                 <h4>实现</h4>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { withBase } from 'vitepress'
+import { sourceHref } from '../sourceBundle'
 import NbText from './NbText'
 
 interface TraceEvent {
@@ -39,7 +40,6 @@ interface TracePayload {
   trace: TraceEvent[]
 }
 
-const repository = 'https://github.com/yuweiyang9611/DataStructureAndAlgorithm'
 const manifest = ref<TraceManifest | null>(null)
 const payload = ref<TracePayload | null>(null)
 const selectedId = ref('')
@@ -109,8 +109,9 @@ function itemChanged(key: string, value: string, previousValue: string, index: n
   return previousItems[index] !== currentItems[index]
 }
 
+// Source read in place: the implementation a Trace comes from opens on the site's source page.
 function sourceUrl(path: string) {
-  return `${repository}/blob/main/${path.split('/').map(encodeURIComponent).join('/')}`
+  return withBase(sourceHref(path))
 }
 
 function stop() {
