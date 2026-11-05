@@ -17,7 +17,9 @@ export interface LearningUnit {
   guide: string
 }
 
-export const repository = 'https://github.com/yuweiyang9611/DataStructureAndAlgorithm'
+import { repository } from './repository.ts'
+
+export { repository }
 
 export const stageLabels: Record<string, string> = {
   S02: '第二阶段 · 线性结构',

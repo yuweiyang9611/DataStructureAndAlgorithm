@@ -1,8 +1,8 @@
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { injectKitHead, notebookCodeTheme, notebookMarkdown, notebookShellColors } from './notebook.mts'
+import { repository } from './data/repository.ts'
 
-const repository = 'https://github.com/yuweiyang9611/DataStructureAndAlgorithm'
 const siteDescription = '用 C# 14 系统学习数据结构、算法、测试方法与综合项目。'
 const siteUrl = 'https://yuweiyang9611.github.io/DataStructureAndAlgorithm/'
 const socialImage = 'https://yuweiyang9611.github.io/DataStructureAndAlgorithm/og.png'
@@ -11,6 +11,9 @@ const completeSourcePages = new Set([
   'CSharp数据结构与算法进阶学习指导.md',
   '综合项目实战学习指导.md'
 ])
+// Kept out of the index and the sitemap: the complete single pages above, and the source page, which
+// shows whichever bundled file ?path= names on the client and so has no one content of its own.
+const noindexPages = new Set([...completeSourcePages, '源码.md'])
 
 function canonicalUrl(relativePath: string) {
   const route = relativePath === 'index.md'
@@ -37,7 +40,7 @@ export default defineConfig({
     hostname: siteUrl,
     transformItems: (items) => items.filter((item) => {
       const url = decodeURI(item.url)
-      return ![...completeSourcePages].some((page) => url.endsWith(page.replace(/\.md$/, '.html')))
+      return ![...noindexPages].some((page) => url.endsWith(page.replace(/\.md$/, '.html')))
     })
   },
   markdown: {
@@ -87,7 +90,7 @@ export default defineConfig({
       )
     }
 
-    if (completeSourcePages.has(pageData.relativePath)) {
+    if (noindexPages.has(pageData.relativePath)) {
       socialHead.push(['meta', { name: 'robots', content: 'noindex, follow' }])
     }
 
@@ -180,6 +183,7 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: '文档与源码导航', link: '/源码导航' },
+          { text: '站内源码', link: '/源码' },
           { text: '完整主线单页', link: '/CSharp数据结构与算法学习指导' },
           { text: '完整进阶单页', link: '/CSharp数据结构与算法进阶学习指导' },
           { text: '完整项目单页', link: '/综合项目实战学习指导' },

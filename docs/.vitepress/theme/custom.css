@@ -1019,3 +1019,32 @@ body { font-synthesis: none; }
   .VPNav, .VPLocalNav, .VPSidebar, .VPDocAside, .VPDocFooter .prev-next, .nb-theme { display: none !important; }
   .VPContent.has-sidebar { padding-left: 0 !important; }
 }
+
+/* ---------- Source read in place: the kit's code panel on a unit, and the source page ---------- */
+
+/* The kit styles the panel itself; the site only places it. A unit's panel is shorter than the page's. */
+.unit-source { --nb-code-height: 24rem; margin: .25rem 0 .75rem; }
+.vp-doc .nb-code-status { margin: 0; }
+.vp-doc .nb-code-actions .nb-code-link { font-size: .875rem; }
+.vp-doc .nb-code-tabs > .nb-code-tab { margin: 0; }
+
+.source-browser { min-width: 0; }
+/* Paths and file names are one long word each: they break anywhere rather than widen a phone's page. */
+.vp-doc .source-crumbs { margin: 0; color: var(--nb-ink-soft); font-size: .875rem; overflow-wrap: anywhere; word-break: break-all; }
+.source-crumb-rule { margin: 0 .375rem; color: var(--nb-ink-soft); }
+.source-crumb-here { color: var(--nb-ink); }
+.vp-doc .source-title { margin: .25rem 0 0; overflow-wrap: anywhere; word-break: break-all; }
+.vp-doc .source-note { max-width: var(--nb-measure); margin: .5rem 0 1.25rem; color: var(--nb-ink-soft); overflow-wrap: anywhere; }
+.vp-doc .source-error { margin: 0 0 1rem; color: var(--nb-wrong); }
+.vp-doc .source-rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--nb-rule-bold); }
+.vp-doc .source-rows > li + li { margin-top: 0; }
+.source-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 2.75rem; padding-block: .375rem; border-bottom: 1px solid var(--nb-rule); }
+.vp-doc .source-row a { font-family: var(--nb-mono); font-size: .9375rem; overflow-wrap: anywhere; }
+.source-row span { flex: none; color: var(--nb-ink-soft); font-size: .875rem; font-variant-numeric: tabular-nums; }
+.source-page-panel { --nb-code-height: calc(100vh - 18rem); margin-top: .5rem; }
+.source-siblings { margin-top: 1.5rem; }
+.vp-doc .source-siblings-title { margin: 0 0 .375rem; padding: 0; border: 0; font-size: 1rem; }
+.vp-doc .source-siblings ul { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin: 0; padding: 0; list-style: none; font-family: var(--nb-mono); font-size: .875rem; }
+.vp-doc .source-siblings li { min-width: 0; max-width: 100%; margin: 0; }
+.vp-doc .source-siblings a { display: inline-flex; align-items: center; min-height: 2.25rem; overflow-wrap: anywhere; word-break: break-all; }
+.vp-doc .source-foot, .vp-doc .source-empty { margin: 1.5rem 0 0; color: var(--nb-ink-soft); font-size: .875rem; }

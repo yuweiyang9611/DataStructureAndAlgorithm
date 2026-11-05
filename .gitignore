@@ -25,3 +25,6 @@ StrykerOutput/
 
 playwright-report/
 test-results/
+
+# The source bundle the site reads in place; docs:build regenerates it from the checkout every time.
+docs/public/source/

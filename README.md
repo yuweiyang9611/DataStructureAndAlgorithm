@@ -132,7 +132,7 @@ dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter
 
 学习进度保存在 IndexedDB，使用事务避免标签页互相覆盖，并通过 BroadcastChannel 和焦点刷新同步。v1/v2 记录会一次性迁移；可以导出 v3 JSON 备份。导入先预览，再按单元更新时间合并，相同时间保留本地；重置包含删除标记，旧备份不会自动复活较新的删除。跨设备导入前请校准设备时钟。存储被禁用时页面仍可学习和导出，但会明确提示尚未持久化。
 
-前端使用 Node.js 24：
+前端使用 Node.js 24。`docs:build` 先运行 `docs:source`，把课程用到的 C# 源码按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
 
 ```powershell
 npm ci

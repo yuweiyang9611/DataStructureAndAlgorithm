@@ -6,6 +6,8 @@ import CourseHome from './components/CourseHome.vue'
 import LearningUnitExplorer from './components/LearningUnitExplorer.vue'
 import NbGuideBand from './components/NbGuideBand.vue'
 import NbScheme from './components/NbScheme.vue'
+import SourceBrowser from './components/SourceBrowser.vue'
+import SourcePanel from './components/SourcePanel.vue'
 import TracePlayer from './components/TracePlayer.vue'
 import { bridgeScheme } from './scheme'
 // Kit first, then the site's own sheet, as on every site in the family.
@@ -22,6 +24,8 @@ export default {
   enhanceApp({ app }) {
     app.component('CourseHome', CourseHome)
     app.component('LearningUnitExplorer', LearningUnitExplorer)
+    app.component('SourceBrowser', SourceBrowser)
+    app.component('SourcePanel', SourcePanel)
     app.component('TracePlayer', TracePlayer)
   },
   setup() {
