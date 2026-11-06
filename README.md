@@ -130,14 +130,18 @@ dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter
 
 ## 学习进度、交互测试与性能实验
 
-学习进度保存在 IndexedDB，使用事务避免标签页互相覆盖，并通过 BroadcastChannel 和焦点刷新同步。v1/v2 记录会一次性迁移；可以导出 v3 JSON 备份。导入先预览，再按单元更新时间合并，相同时间保留本地；重置包含删除标记，旧备份不会自动复活较新的删除。跨设备导入前请校准设备时钟。存储被禁用时页面仍可学习和导出，但会明确提示尚未持久化。
+学习进度保存在 IndexedDB，使用事务避免标签页互相覆盖，并通过 BroadcastChannel 和焦点刷新同步。v1/v2 记录会一次性迁移，v3 记录按原样读成 v4（新增的步骤字段都是可选的）；可以导出 v4 JSON 备份，v3 备份仍可导入。导入先预览，再按单元更新时间合并，相同时间保留本地；重置包含删除标记，旧备份不会自动复活较新的删除。跨设备导入前请校准设备时钟。存储被禁用时页面仍可学习和导出，但会明确提示尚未持久化。
 
-前端使用 Node.js 24。`docs:build` 先运行 `docs:source`，把课程用到的 C# 源码按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
+每个学习单元顶上有一条学习步骤带（读、看代码、跑、自测、记一笔），状态只来自记录：开始学习、面板里打开过文件、在浏览器里跑完示例、答对自测、保存过笔记。每个单元都有一段 `docs/demos/<unit-id>.cs` 示例（面板里的“试一试”），在浏览器里由 Roslyn + .NET WebAssembly 运行时编译执行，类库和四个综合项目编成引用一起装进运行时；示例可以改一改再跑。
+
+前端使用 Node.js 24，浏览器运行时需要 .NET 10 SDK 以及 `wasm-tools`、`wasm-experimental` 两个工作负载。`docs:runtime` 发布 `tools/browser-runtime/` 下的运行时，把类库编成引用，并在桌面引擎里把 22 个示例各编译运行一遍，输出到 `docs/public/runtime/`（约 60 MB，不入库）；`docs:build` 没有它会直接失败。`docs:build` 随后运行 `docs:source`，把课程用到的 C# 源码和示例按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
 
 ```powershell
+dotnet workload install wasm-tools wasm-experimental
 npm ci
 npm run docs:typecheck
 npm run docs:test
+npm run docs:runtime
 npm run docs:build
 npx playwright install chromium firefox webkit
 npm run docs:test:e2e

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Compiles and runs every unit demo on the desktop with the same engine, references and entry the browser uses, so a demo that cannot run is caught at build time without a browser. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ExerciseEngine/ExerciseEngine.csproj" />
+  </ItemGroup>
+</Project>

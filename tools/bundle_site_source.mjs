@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } 
 import { spawnSync } from 'node:child_process'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { demoDirectory, demoPath } from '../docs/.vitepress/data/demos.ts'
 import { learningUnits } from '../docs/.vitepress/data/learningUnits.ts'
 import { blobBase, repository } from '../docs/.vitepress/data/repository.ts'
 
@@ -13,7 +14,8 @@ const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outputDirectory = join(repositoryRoot, 'docs', 'public', 'source')
 
 // The learning folders: the library, its tests, the two demos and the four scenario projects, plus the
-// root files that explain how they build. Only files a reader can learn from are bundled.
+// root files that explain how they build, plus the 22 unit demos the 试一试 tab runs. Only files a
+// reader can learn from are bundled.
 const sourceRoots = [
   'DataStructureAndAlgorithm',
   'DataStructureAndAlgorithm.Test',
@@ -22,7 +24,8 @@ const sourceRoots = [
   'DataStructureAndAlgorithm.Scenarios.CityDelivery',
   'DataStructureAndAlgorithm.Scenarios.MiniSearch',
   'DataStructureAndAlgorithm.Scenarios.MiniStorage',
-  'DataStructureAndAlgorithm.Scenarios.ProjectScheduling'
+  'DataStructureAndAlgorithm.Scenarios.ProjectScheduling',
+  demoDirectory
 ]
 const rootFiles = ['README.md', 'DataStructureAndAlgorithm.slnx', 'Directory.Build.props', 'Directory.Build.targets', 'global.json', 'coverage.runsettings']
 const sourceExtensions = new Set(['.cs', '.csproj', '.props', '.targets', '.slnx', '.json', '.md', '.ps1', '.psd1', '.cmd', '.sh', '.yml', '.yaml', '.runsettings', '.txt', '.editorconfig'])
@@ -86,6 +89,7 @@ for (const path of candidates) {
 const required = new Map()
 for (const unit of learningUnits) {
   for (const path of [...unit.sources, ...unit.tests]) required.set(path, `unit ${unit.id}`)
+  required.set(demoPath(unit.id), `unit ${unit.id} (试一试)`)
 }
 const manifestPath = join(repositoryRoot, 'docs', 'public', 'traces', 'manifest.json')
 if (existsSync(manifestPath)) {

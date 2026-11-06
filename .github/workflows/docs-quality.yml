@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
+      # The browser runtime (tools/browser-runtime) publishes for browser-wasm; both workloads are needed.
+      - run: dotnet workload install wasm-tools wasm-experimental
       - run: npm ci
       - run: npm audit --audit-level=high
       - run: npm run docs:typecheck
@@ -37,6 +39,8 @@ jobs:
             printf '%s\n' "$changes"
             exit 1
           fi
+      - name: Build the browser runtime and verify the 22 demos
+        run: npm run docs:runtime
       - run: npm run docs:build
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run docs:test:e2e

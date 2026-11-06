@@ -43,7 +43,7 @@ test('self-check, evidence, review and export/import roundtrip', async ({page}) 
   const downloaded = page.waitForEvent('download')
   await page.getByRole('button',{name:'导出进度备份'}).click()
   const download = await downloaded
-  expect(download.suggestedFilename()).toBe('learning-progress-v3.json')
+  expect(download.suggestedFilename()).toBe('learning-progress-v4.json')
   await page.getByLabel('导入进度备份').setInputFiles((await download.path())!)
   await expect(page.getByText('新增 0 · 更新 0 · 删除 0 · 忽略 1')).toBeVisible()
   await page.getByRole('button',{name:'确认合并备份'}).click()

@@ -25,36 +25,62 @@ test('an empty record offers the first unit and marks nothing', () => {
   assert.equal(course.total, 22)
 })
 
-test('the stopped place is the unfinished unit touched last, then a due review, then the next unit', () => {
-  let store = master(emptyStore(), 'core-linear-structures', now - 9 * day)
-  store = applyAction(store, { type: 'start', id: 'core-array-search' }, now - 3 * day)
+/** Every step of the loop band done as well as verified. */
+function finish(store: ProgressStore, id: string, at: number) {
+  let next = master(store, id, at)
+  next = applyAction(next, { type: 'open-source', id }, at)
+  next = applyAction(next, { type: 'ran', id }, at)
+  return applyAction(next, { type: 'note', id, text: '学完了。' }, at)
+}
+
+test('the stopped place is the earliest touched unit whose band has a 停在这里 step, then a due review, then the next unit', () => {
+  let store = finish(emptyStore(), 'core-linear-structures', now - 3 * day)
   store = applyAction(store, { type: 'start', id: 'core-sorting' }, now - 4 * day)
+  store = applyAction(store, { type: 'start', id: 'core-array-search' }, now - 2 * day)
   let course = readCourse(store, now)
   assert.equal(course.kind, 'learning')
+  // Course order decides between the two touched units, not which was touched last.
   assert.equal(course.unit?.id, 'core-array-search')
-  // A review has come due as well, but the unit in progress is where the owner stopped.
-  assert.deepEqual([course.verified, course.learning, course.due], [1, 2, 1])
-  assert.equal(course.lastUpdatedAt, now - 3 * day)
+  assert.equal(course.step?.id, 'code')
+  assert.deepEqual([course.verified, course.learning, course.due], [1, 2, 0])
+  assert.equal(course.lastUpdatedAt, now - 2 * day)
 
-  store = applyAction(store, { type: 'reset', id: 'core-array-search' }, now - 2 * day)
-  store = applyAction(store, { type: 'reset', id: 'core-sorting' }, now - 2 * day)
-  course = readCourse(store, now - 2 * day - 1)
+  store = applyAction(store, { type: 'reset', id: 'core-array-search' }, now - day)
+  store = applyAction(store, { type: 'reset', id: 'core-sorting' }, now - day)
+  course = readCourse(store, now)
   assert.equal(course.kind, 'next')
+  assert.equal(course.step, undefined)
   assert.equal(course.unit?.id, orderedUnits.find((unit) => unit.id !== 'core-linear-structures' && unit.prerequisites.every((id) => id === 'core-linear-structures'))?.id)
 
-  course = readCourse(store, now - 9 * day + reviewIntervals[0] + 1)
+  course = readCourse(store, now - 3 * day + reviewIntervals[0] + 1)
   assert.equal(course.kind, 'review')
   assert.equal(course.unit?.id, 'core-linear-structures')
   assert.equal(course.due, 1)
 })
 
-test('every unit verified leaves no stopped place', () => {
+test('a verified unit whose band is not done is still the place to continue, at its step', () => {
+  let store = master(emptyStore(), 'core-linear-structures', now - 2 * day)
+  store = finish(store, 'core-array-search', now - day)
+  const course = readCourse(store, now)
+  assert.equal(course.kind, 'learning')
+  assert.equal(course.unit?.id, 'core-linear-structures')
+  assert.equal(course.step?.id, 'code')
+  // Verified, so the quiz step is done even though it comes after the stopped one.
+  assert.equal(course.verified, 2)
+})
+
+test('every unit finished leaves no stopped place', () => {
   let store = emptyStore()
-  for (const unit of orderedUnits) store = master(store, unit.id, now)
+  for (const unit of orderedUnits) store = finish(store, unit.id, now)
   const course = readCourse(store, now)
   assert.equal(course.kind, 'complete')
   assert.equal(course.unit, undefined)
   assert.equal(course.verified, 22)
+  // Verified alone is not finished: the band's other steps still wait.
+  let verifiedOnly = emptyStore()
+  for (const unit of orderedUnits) verifiedOnly = master(verifiedOnly, unit.id, now)
+  assert.equal(readCourse(verifiedOnly, now).kind, 'learning')
+  assert.equal(readCourse(verifiedOnly, now).unit?.id, orderedUnits[0].id)
 })
 
 test('the record line reaches as far as the unit has gone, and is solid only once verified', () => {

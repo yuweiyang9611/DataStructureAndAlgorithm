@@ -1,4 +1,6 @@
 import { reviewIntervals } from '../docs/.vitepress/data/progress.ts'
+import { stepLabels, stepOrder } from '../docs/.vitepress/data/band.ts'
+import { demoPath } from '../docs/.vitepress/data/demos.ts'
 import { learningUnits, stageLabels } from '../docs/.vitepress/data/learningUnits.ts'
 import { masteryByUnitId, masteryRevision, masteryEvidenceIds } from '../docs/.vitepress/data/masteryContent.ts'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
@@ -414,7 +416,8 @@ for (const unit of learningUnits) {
   const quiz = content.selfCheck
   if (quiz.options.length !== 4 || new Set(quiz.options).size !== 4 || !Number.isInteger(quiz.correctIndex) || quiz.correctIndex < 0 || quiz.correctIndex > 3 || typeof quiz.explanation !== 'string' || !quiz.explanation.trim()) errors.push('Invalid quiz: '+unit.id)
   const start = learningUnitHtml.indexOf('id="unit-'+unit.id+'"')
-  const end = learningUnitHtml.indexOf('</li>',start)
+  // The unit's article, not its first </li>: the loop band inside the unit is a list of its own.
+  const end = learningUnitHtml.indexOf('</article>',start)
   // A squeezed mark is wrapped in `.nb-halt`; the text itself must still be there in full.
   const rendered = decodeHtml(learningUnitHtml.slice(start,end).replace(/<span class="nb-halt">(.)<\/span>/g, '$1').replace(/<!--[\[\]]-->/g, ''))
   for (const text of [quiz.question,...quiz.options,...masteryEvidenceIds.map(id=>content.evidence[id])]) {
@@ -463,6 +466,43 @@ if (existsSync(sourceIndexPath)) {
 const unitPanelCount = [...learningUnitHtml.matchAll(/class="nb-code source-panel unit-source"/g)].length
 if (unitPanelCount !== learningUnits.length) errors.push(`学习单元.html: expected ${learningUnits.length} source panels, found ${unitPanelCount}`)
 if (learningUnitHtml.includes('class="nb-code-link"')) errors.push('学习单元.html: the panel GitHub link must be added after hydration, not server-rendered')
+
+// Run in the browser: every unit has its 试一试 demo in the bundle and as the panel's first, selected
+// tab with the 运行 action; the runtime the worker loads is in the output with its reference manifest.
+for (const unit of learningUnits) {
+  if (!bundledSourcePaths.has(demoPath(unit.id))) errors.push(`unit ${unit.id} has no 试一试 demo in the source bundle: ${demoPath(unit.id)}`)
+}
+const demoTabCount = [...learningUnitHtml.matchAll(/<button[^>]*class="nb-code-tab"[^>]*aria-selected="true"[^>]*data-path="docs\/demos\/[^"]+\.cs"[^>]*>试一试<\/button>/g)].length
+if (demoTabCount !== learningUnits.length) errors.push(`学习单元.html: expected ${learningUnits.length} selected 试一试 tabs, found ${demoTabCount}`)
+const panelTabCount = [...learningUnitHtml.matchAll(/class="nb-code-tab"/g)].length
+if (panelTabCount !== learningUnits.length * 3) errors.push(`学习单元.html: expected ${learningUnits.length * 3} panel tabs (试一试, source, test), found ${panelTabCount}`)
+const runButtonCount = [...learningUnitHtml.matchAll(/<button[^>]*class="nb-button nb-button--solid"[^>]*>运行<\/button>/g)].length
+if (runButtonCount !== learningUnits.length) errors.push(`学习单元.html: expected ${learningUnits.length} 运行 buttons, found ${runButtonCount}`)
+for (const asset of ['compiler-worker.js', 'runtime/_framework/dotnet.js', 'runtime/refs/manifest.json']) {
+  if (!existsSync(join(outputRoot, asset))) errors.push(`missing browser runtime asset ${asset}`)
+}
+if (existsSync(join(outputRoot, 'runtime/refs/manifest.json'))) {
+  const manifest = JSON.parse(readFileSync(join(outputRoot, 'runtime/refs/manifest.json'), 'utf8'))
+  if (!Array.isArray(manifest.assemblies) || !manifest.assemblies.includes('DataStructureAndAlgorithm.dll')) errors.push('runtime/refs/manifest.json: the course library is not listed as a runtime assembly')
+  for (const name of manifest.references ?? []) if (!existsSync(join(outputRoot, 'runtime/refs', name))) errors.push(`runtime/refs: missing ${name}`)
+}
+
+// The loop band: five steps per unit in the fixed order, every one pending on the server render (no
+// record, no script), each label linking to the section that does the step; one 记一笔 per unit.
+const bandCount = [...learningUnitHtml.matchAll(/class="nb-steps unit-steps"/g)].length
+if (bandCount !== learningUnits.length) errors.push(`学习单元.html: expected ${learningUnits.length} loop bands, found ${bandCount}`)
+const bandSteps = [...learningUnitHtml.matchAll(/<li data-step="([a-z]+)" data-state="([a-z]+)"><a href="#([^"]+)">([^<]+)<\/a><\/li>/g)]
+if (bandSteps.length !== learningUnits.length * stepOrder.length) errors.push(`学习单元.html: expected ${learningUnits.length * stepOrder.length} band steps, found ${bandSteps.length}`)
+for (const [index, step] of bandSteps.entries()) {
+  const expected = stepOrder[index % stepOrder.length]
+  if (step[1] !== expected) errors.push(`学习单元.html: band step ${index} is ${step[1]}, expected ${expected}`)
+  if (step[2] !== 'pending') errors.push(`学习单元.html: band step ${step[1]} is ${step[2]} on the server render, expected pending`)
+  if (step[4] !== stepLabels[expected]) errors.push(`学习单元.html: band step ${step[1]} reads ${step[4]}, expected ${stepLabels[expected]}`)
+  if (!new RegExp(`\\bid="${escapeRegExp(step[3])}"`).test(learningUnitHtml)) errors.push(`学习单元.html: band step links to a missing section #${step[3]}`)
+}
+if (learningUnitHtml.includes('class="unit-continue"')) errors.push('学习单元.html: the continue line must not render without a record')
+const noteCount = [...learningUnitHtml.matchAll(/class="nb-input unit-note-input"/g)].length
+if (noteCount !== learningUnits.length) errors.push(`学习单元.html: expected ${learningUnits.length} 记一笔 textareas, found ${noteCount}`)
 const repositoryLinks = /\bhref="https:\/\/github\.com\/yuweiyang9611\/DataStructureAndAlgorithm\/(blob|tree)\/[^/"]+\/([^"#?]+)/g
 for (const [pagePath, html] of htmlByRelativePath) {
   const checked = html.replace(/<noscript>[\s\S]*?<\/noscript>/g, '')

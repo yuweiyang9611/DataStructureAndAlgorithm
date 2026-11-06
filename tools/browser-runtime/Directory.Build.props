@@ -1,0 +1,19 @@
+<Project>
+  <!--
+    The browser runtime stands apart from the course's build gates: this file stops the repository's
+    Directory.Build.props (warnings as errors, analyzers, code style in build) from reaching the
+    vendored engine and host, because they fight the Roslyn package and the WebAssembly SDK. The
+    course library itself is still built with its own gates when the host references it.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+</Project>

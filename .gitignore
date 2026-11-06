@@ -28,3 +28,6 @@ test-results/
 
 # The source bundle the site reads in place; docs:build regenerates it from the checkout every time.
 docs/public/source/
+
+# The browser runtime (.NET on WebAssembly, Roslyn and the course library as references); docs:runtime builds it, about 70 MB, never committed.
+docs/public/runtime/

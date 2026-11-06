@@ -1,4 +1,4 @@
-import { applyAction, emptyStore, mergeBackup, type ImportData, type ProgressAction, type ProgressStore } from './progress.ts'
+import { applyAction, emptyStore, mergeBackup, upgradeStore, type ImportData, type ProgressAction, type ProgressStore } from './progress.ts'
 
 export class StaleProgressError extends Error {
   constructor() { super('进度已在其他页面重置，请根据最新状态重新操作。') }
@@ -30,7 +30,9 @@ export class ProgressRepository {
       let failure: unknown
       request.onsuccess = () => {
         try {
-          result = update ? update(request.result) : request.result ?? emptyStore()
+          // Whatever shape is stored (schema 3 from the live site, or 4) is read as schema 4.
+          const stored = request.result === undefined ? undefined : upgradeStore(request.result)
+          result = update ? update(stored) : stored ?? emptyStore()
           if (update) entries.put(result, 'current')
         } catch (error) { failure = error; transaction.abort() }
       }
