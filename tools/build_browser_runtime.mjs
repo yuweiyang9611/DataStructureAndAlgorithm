@@ -78,7 +78,9 @@ for (const project of courseProjects) {
 // 3. The site assets: _framework/ and refs/ with one manifest naming both lists.
 rmSync(destination, { recursive: true, force: true })
 mkdirSync(destination, { recursive: true })
-cpSync(framework, join(destination, '_framework'), { recursive: true })
+// The loader fetches the plain files; the precompressed .br/.gz twins only matter behind a negotiating server,
+// and the Pages deployment stalled on the 366 extra files.
+cpSync(framework, join(destination, '_framework'), { recursive: true, filter: (source) => !/.(?:br|gz)$/.test(source) })
 const referenceDirectory = join(destination, 'refs')
 mkdirSync(referenceDirectory, { recursive: true })
 for (const name of frameworkReferences) {
