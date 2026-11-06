@@ -1,3 +1,4 @@
+import { nowStep, type BandStep } from './band.ts'
 import { learningUnits, type LearningUnit } from './learningUnits.ts'
 import { masteryEvidenceIds, masteryRevision } from './masteryContent.ts'
 import { statusOf, type ProgressStore, type UnitProgress, type UnitStatus } from './progress.ts'
@@ -76,6 +77,8 @@ export interface CourseRecord {
   /** Where the continue link points; on 'complete' it is undefined. */
   unit?: LearningUnit
   kind: StopKind
+  /** The step of that unit's loop band marked 停在这里, when the unit has a record. */
+  step?: BandStep
   /** The most recent change in the record, for "上次记录". */
   lastUpdatedAt?: number
 }
@@ -96,10 +99,17 @@ export function readCourse(store: ProgressStore, now: number): CourseRecord {
 
   if (!hasRecord) return { ...base, kind: 'empty', unit: firstAvailable ?? orderedUnits[0] }
 
-  // The place the owner stopped is the unit they touched last and have not finished.
-  const lastLearning = [...inProgress]
-    .sort((left, right) => (store.units[right.id]?.updatedAt ?? 0) - (store.units[left.id]?.updatedAt ?? 0))[0]
-  if (lastLearning) return { ...base, kind: 'learning', unit: lastLearning }
+  // The place the owner stopped is the earliest unit, in course order, whose loop band still has a
+  // step marked 停在这里, among the units they have touched (an untouched unit's band is all pending
+  // and it comes later, as the next unit). A due review on such a unit is said as a review.
+  const stopped = orderedUnits.find((unit) => store.units[unit.id] && nowStep(store.units[unit.id]))
+  if (stopped) {
+    return { ...base, kind: status(stopped) === 'review' ? 'review' : 'learning', unit: stopped, step: nowStep(store.units[stopped.id]) }
+  }
+
+  // A unit whose five steps are all done but is not yet verified still needs its evidence.
+  const unverified = inProgress[0]
+  if (unverified) return { ...base, kind: 'learning', unit: unverified }
 
   const firstDue = [...dueUnits]
     .sort((left, right) => (store.units[left.id]?.nextReviewAt ?? 0) - (store.units[right.id]?.nextReviewAt ?? 0))[0]

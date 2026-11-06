@@ -8,10 +8,12 @@ import {
   type MasteryEvidenceId
 } from '../../data/masteryContent'
 import { learningUnits, stageLabels, type LearningUnit } from '../../data/learningUnits'
+import { pendingBand, unitBand, type BandStep, type StepId } from '../../data/band.ts'
+import { demoLabel, demoPath } from '../../data/demos.ts'
 import { sourceHref } from '../sourceBundle'
 import SourcePanel, { type SourcePanelFile } from './SourcePanel.vue'
 
-import { emptyStore, applyAction, statusOf as progressStatus, canVerify as progressCanVerify, canReview as progressCanReview, migrateLegacy, parseBackup, exportBackup, mergeBackup, type ProgressAction, type ImportData } from '../../data/progress.ts'
+import { emptyStore, applyAction, statusOf as progressStatus, canVerify as progressCanVerify, canReview as progressCanReview, migrateLegacy, parseBackup, exportBackup, mergeBackup, noteLimit, ProgressRuleError, type ProgressAction, type ImportData } from '../../data/progress.ts'
 import { parseBackupJson } from '../../data/backupJson.ts'
 import { ProgressRepository, StaleProgressError } from '../../data/progressRepository.ts'
 import { orderedUnits, readCourse, stepsDone, unitSteps } from '../../data/record.ts'
@@ -72,6 +74,9 @@ function dispatch(action: ProgressAction) {
       if (error instanceof StaleProgressError) {
         notice.value = error.message
         if (repositoryStore) accept(await repositoryStore.read())
+      } else if (error instanceof ProgressRuleError) {
+        // A rule the reader can act on, such as the note cap: nothing was saved and storage is fine.
+        notice.value = error.message
       } else {
         storageError.value = true
         accept(applyAction(toRaw(progressStore.value), action, Date.now()))
@@ -85,7 +90,7 @@ function exportProgress() {
   const blob = new Blob([JSON.stringify(exportBackup(toRaw(progressStore.value)), null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
-  link.href = url; link.download = 'learning-progress-v3.json'; link.click()
+  link.href = url; link.download = 'learning-progress-v4.json'; link.click()
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 async function previewImport(event: Event) {
@@ -140,15 +145,57 @@ const verifiedCount = computed(() => orderedUnits.filter((unit) => isMastered(un
 const dueCount = computed(() => orderedUnits.filter((unit) => statusOf(unit.id) === 'review').length)
 const progressPercent = computed(() => Math.round((verifiedCount.value / learningUnits.length) * 100))
 const hasProgress = computed(() => Object.keys(progressStore.value.units).length > 0)
-// The one stopped mark in the register, from the same rule as the course's continue link.
+// The one stopped mark in the register, from the same rule as the course's continue link: the
+// earliest unit whose loop band still has a step marked 停在这里.
+const course = computed(() => readCourse(progressStore.value, now.value))
 const stoppedId = computed(() => {
   if (!hydrated.value) return undefined
-  const course = readCourse(progressStore.value, now.value)
-  return course.hasRecord && course.kind !== 'complete' ? course.unit?.id : undefined
+  return course.value.hasRecord && course.value.kind !== 'complete' ? course.value.unit?.id : undefined
 })
+const continueUnit = computed(() => hydrated.value && course.value.hasRecord && course.value.kind !== 'complete' ? course.value.unit : undefined)
 function unitFraction(id: string) { return stepsDone(progressStore.value.units[id], now.value) / unitSteps }
 // The band at the top takes the hue of the unit to continue with, so it matches the card on the opening screen.
-const bandHue = computed(() => hueOf(readCourse(progressStore.value, now.value).unit ?? orderedUnits[0]))
+const bandHue = computed(() => hueOf(course.value.unit ?? orderedUnits[0]))
+
+// The loop band of each unit: five steps read from its record; all pending until the record is read
+// (the server render), so a page without script says the same thing for every unit.
+function bandOf(id: string): BandStep[] {
+  return hydrated.value ? unitBand(progressStore.value.units[id]) : pendingBand()
+}
+// Each step's label links to the section of the unit that does it; a closed details opens first.
+function stepAnchor(id: string, step: StepId) {
+  return { read: `unit-title-${id}`, code: `unit-source-${id}`, run: `unit-run-${id}`, quiz: `unit-quiz-${id}`, note: `unit-note-${id}` }[step]
+}
+function openStep(id: string, step: StepId) {
+  const details = step === 'code' || step === 'run'
+    ? document.getElementById(`unit-source-${id}`)
+    : step === 'quiz' ? document.getElementById(`unit-quiz-${id}`) : null
+  if (details instanceof HTMLDetailsElement) details.open = true
+}
+
+// 记一笔: one note per unit, kept in the same record, saved on the button; the draft lives on the page.
+const noteDrafts = ref<Record<string, string | undefined>>({})
+const savedNoteId = ref('')
+function savedNote(id: string) { return progressStore.value.units[id]?.note ?? '' }
+function noteDraft(id: string) { return noteDrafts.value[id] ?? savedNote(id) }
+function noteDirty(id: string) { return noteDrafts.value[id] !== undefined && noteDrafts.value[id] !== savedNote(id) }
+function editNote(id: string, event: Event) {
+  savedNoteId.value = ''
+  noteDrafts.value = { ...noteDrafts.value, [id]: (event.target as HTMLTextAreaElement).value }
+}
+function saveNote(id: string) {
+  const text = noteDraft(id)
+  dispatch({ type: 'note', id, text })
+  queue.then(() => {
+    if (savedNote(id) === (text.trim() ? text : '')) { delete noteDrafts.value[id]; savedNoteId.value = id }
+  })
+}
+function noteStatus(id: string) {
+  if (noteDirty(id)) return '有改动，还没保存'
+  if (savedNoteId.value === id) return '已保存'
+  const record = progressStore.value.units[id]
+  return record?.note ? `上次保存：${formatDate(record.updatedAt)}` : ''
+}
 
 const filteredUnits = computed(() => {
   const needle = query.value.trim().toLocaleLowerCase('zh-CN')
@@ -198,6 +245,10 @@ function evidenceComplete(id: string) {
 }
 
 function startUnit(id: string) { dispatch({ type: 'start', id }) }
+// The band's 看代码 and 跑 come from the panel: a file shown (the details opened or a tab clicked) and
+// a browser run that finished without an error.
+function handleSourceSelect(id: string) { if (hydrated.value && !progressStore.value.units[id]?.sourceOpenedAt) dispatch({ type: 'open-source', id }) }
+function handleRan(id: string) { if (hydrated.value) dispatch({ type: 'ran', id }) }
 function handleMasteryToggle(id: string, event: Event) {
   if ((event.target as HTMLDetailsElement).open && !progressStore.value.units[id]) startUnit(id)
 }
@@ -264,14 +315,18 @@ function sourceUrl(path: string) {
   return withBase(sourceHref(path))
 }
 
-// The panel in a unit shows its first implementation file and its first test file. It fetches nothing
-// until the details element opens, so the page does not load 44 files on arrival.
+// The panel in a unit shows its runnable demo (试一试), then its first implementation file and its
+// first test file. It fetches nothing until the details element opens, so the page does not load
+// 66 files on arrival.
 const resourcesOpen = ref<Record<string, boolean>>({})
 function handleResourcesToggle(id: string, event: Event) {
   resourcesOpen.value = { ...resourcesOpen.value, [id]: (event.target as HTMLDetailsElement).open }
 }
 function panelFiles(unit: LearningUnit): SourcePanelFile[] {
-  return [unit.sources[0], unit.tests[0]].filter((path): path is string => !!path).map((path) => ({ path }))
+  return [
+    { path: demoPath(unit.id), label: demoLabel },
+    ...[unit.sources[0], unit.tests[0]].filter((path): path is string => !!path).map((path) => ({ path }))
+  ]
 }
 
 async function copyCommand(unit: LearningUnit) {
@@ -336,6 +391,9 @@ onBeforeUnmount(() => {
           :aria-valuenow="verifiedCount"
           :style="{ '--nb-fraction': verifiedCount / learningUnits.length }"
         ><span /></div>
+        <p v-if="continueUnit" class="unit-continue">
+          接着做：<a :href="`#unit-${continueUnit.id}`" @click.prevent="focusUnit(continueUnit.id)"><NbText :text="continueUnit.title" /></a><template v-if="course.step"> · 停在「{{ course.step.label }}」</template>
+        </p>
       </div>
       <h2 id="unit-explorer-heading">22 个可验证学习单元</h2>
       <p class="unit-progress-note">进度只保存在当前浏览器。自测答对并完成不变量、测试和迁移三类证据后，单元才会标记为“已验证<span class="nb-halt">”</span>。</p>
@@ -435,6 +493,12 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
+          <ol class="nb-steps unit-steps" :aria-label="`${unit.title} 的学习步骤`">
+            <li v-for="step in bandOf(unit.id)" :key="step.id" :data-step="step.id" :data-state="step.state">
+              <a :href="`#${stepAnchor(unit.id, step.id)}`" @click="openStep(unit.id, step.id)">{{ step.label }}</a>
+            </li>
+          </ol>
+
           <dl class="unit-facts">
             <div>
               <dt>核心不变量</dt>
@@ -455,7 +519,7 @@ onBeforeUnmount(() => {
           </p>
           <p v-else class="unit-prerequisites"><strong>前置：</strong>可直接开始</p>
 
-          <details class="unit-mastery" @toggle="handleMasteryToggle(unit.id, $event)">
+          <details :id="`unit-quiz-${unit.id}`" class="unit-mastery" @toggle="handleMasteryToggle(unit.id, $event)">
             <summary>掌握验证：自测 + 三类证据</summary>
             <div class="unit-mastery-body">
               <p class="unit-mastery-note">这是本机自证流程，站点不会替你执行 C# 测试。请在仓库中完成任务后如实勾选。</p>
@@ -516,9 +580,18 @@ onBeforeUnmount(() => {
             </div>
           </details>
 
-          <details class="unit-resources" @toggle="handleResourcesToggle(unit.id, $event)">
-            <summary>源码、测试与运行命令</summary>
-            <SourcePanel class="unit-source" :files="panelFiles(unit)" :deferred="!resourcesOpen[unit.id]" />
+          <details :id="`unit-source-${unit.id}`" class="unit-resources" @toggle="handleResourcesToggle(unit.id, $event)">
+            <summary>试一试、源码、测试与运行命令</summary>
+            <SourcePanel
+              :id="`unit-run-${unit.id}`"
+              class="unit-source"
+              :files="panelFiles(unit)"
+              :active="demoPath(unit.id)"
+              :demo="demoPath(unit.id)"
+              :deferred="!resourcesOpen[unit.id]"
+              @select="handleSourceSelect(unit.id)"
+              @ran="handleRan(unit.id)"
+            />
             <div class="unit-resource-grid">
               <div>
                 <h4>实现</h4>
@@ -538,6 +611,23 @@ onBeforeUnmount(() => {
               <button type="button" class="text-action" @click="copyCommand(unit)">{{ copiedId === unit.id ? '已复制' : copyFailedId === unit.id ? '复制失败' : '复制命令' }}</button>
             </div>
           </details>
+
+          <div :id="`unit-note-${unit.id}`" class="unit-note">
+            <label :for="`unit-note-input-${unit.id}`">记一笔</label>
+            <textarea
+              :id="`unit-note-input-${unit.id}`"
+              class="nb-input unit-note-input"
+              rows="3"
+              :maxlength="noteLimit"
+              :value="noteDraft(unit.id)"
+              placeholder="这个单元学到了什么、卡在哪里。只保存在这台电脑的浏览器里。"
+              @input="editNote(unit.id, $event)"
+            ></textarea>
+            <div class="unit-note-actions">
+              <button type="button" class="nb-button" :disabled="!noteDirty(unit.id) || pending" @click="saveNote(unit.id)">保存笔记</button>
+              <span class="unit-note-status" role="status">{{ noteStatus(unit.id) }}</span>
+            </div>
+          </div>
 
           <p class="unit-links">
             <a :href="withBase(unit.guide)">阅读指南</a>

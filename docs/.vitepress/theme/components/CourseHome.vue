@@ -146,12 +146,12 @@ const singlePages: Row[] = [
           <p id="resume-label" class="nb-banner-eyebrow">接着做</p>
           <p class="nb-banner-title">
             <a id="cta-title" class="continue-learning" :href="continueHref" :data-kind="course.kind">
-              <template v-if="course.kind === 'complete'">22 个单元都已验证：打开学习单元</template>
+              <template v-if="course.kind === 'complete'">22 个单元都已完成：打开学习单元</template>
               <template v-else>{{ continueLead }}：<NbText :text="runUnit?.title" /></template>
             </a>
           </p>
           <p v-if="course.hasRecord" class="nb-banner-note record-copy">
-            <strong>{{ course.verified }} / {{ course.total }}</strong> 已验证
+            <template v-if="course.step">停在「{{ course.step.label }}」 · </template><strong>{{ course.verified }} / {{ course.total }}</strong> 已验证
             · {{ course.learning }} 个学习中<template v-if="course.due"> · {{ course.due }} 个待复习</template>
             <template v-if="course.lastUpdatedAt"> · 上次学习：{{ daysAgo(course.lastUpdatedAt, now) }}</template>
           </p>

@@ -1048,3 +1048,27 @@ body { font-synthesis: none; }
 .vp-doc .source-siblings li { min-width: 0; max-width: 100%; margin: 0; }
 .vp-doc .source-siblings a { display: inline-flex; align-items: center; min-height: 2.25rem; overflow-wrap: anywhere; word-break: break-all; }
 .vp-doc .source-foot, .vp-doc .source-empty { margin: 1.5rem 0 0; color: var(--nb-ink-soft); font-size: .875rem; }
+
+/* ---------- Loop band, 试一试 and 记一笔 (phase 3) ---------- */
+
+/* The band inside a unit: the kit's pills; VitePress's list rules are undone so the pills stay pills. */
+.vp-doc .unit-steps { margin: .625rem 0 0; padding: 0; list-style: none; }
+.vp-doc .unit-steps > li { margin: 0; }
+.vp-doc .unit-steps a { color: inherit; font-weight: inherit; text-decoration: none; }
+.vp-doc .unit-steps a:hover { text-decoration: underline; }
+/* The continue line in the top band: the unit to go on with and the step it stopped at. */
+.vp-doc .unit-continue { flex: 1 1 100%; margin: .25rem 0 0; font-size: .9375rem; }
+.vp-doc .unit-continue a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: .22em; }
+
+/* The runnable tab: the editor takes the view's height, and the output sits under the actions. */
+.unit-source .nb-code-editor { max-height: var(--nb-code-height, 24rem); }
+.vp-doc .nb-code-output { margin: 0; }
+.vp-doc .nb-code-output-label { margin: 0; }
+.vp-doc .nb-code-output pre { margin: .25rem 0 0; padding: 0; border-radius: 0; background: none; color: var(--nb-ink); }
+
+/* 记一笔: a label, the textarea on the paper, then the save action and its word. */
+.unit-note { display: grid; gap: .375rem; margin-top: 1rem; }
+.unit-note > label { color: var(--nb-ink-soft); font-size: .875rem; }
+.unit-note-input { width: 100%; min-height: 4.5rem; resize: vertical; font: inherit; line-height: 1.5; }
+.unit-note-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; }
+.unit-note-status { color: var(--nb-ink-soft); font-size: .875rem; }

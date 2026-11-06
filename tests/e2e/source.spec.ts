@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, expect } from '@playwright/test'
+import { demoPath } from '../../docs/.vitepress/data/demos.ts'
 import { learningUnits } from '../../docs/.vitepress/data/learningUnits.ts'
 
 // Source read in place: a unit shows its first implementation and test file in the kit's code panel,
@@ -25,14 +26,25 @@ test('a unit opens its source and test in the panel, coloured and numbered, and 
   const panel = unit.locator('.source-panel')
   const requests: string[] = []
   page.on('request', (request) => { if (request.url().includes('/source/')) requests.push(request.url()) })
-  // Closed details fetch nothing.
-  await expect(panel.locator('.nb-code-tab')).toHaveCount(2)
+  // Closed details fetch nothing. The tabs are 试一试 (the runnable demo, selected), the source and the test.
+  await expect(panel.locator('.nb-code-tab')).toHaveCount(3)
+  await expect(panel.locator('.nb-code-tab').first()).toHaveText('试一试')
   expect(requests).toEqual([])
   await unit.locator('.unit-resources > summary').click()
   await expect(panel.locator('.nb-code-line').first()).toBeVisible()
-  const lineCount = await panel.locator('.nb-code-line').count()
+  await expect(panel.locator('.nb-code-tab[aria-selected="true"]')).toHaveText('试一试')
+  const demoText = readFileSync(demoPath(firstUnit.id), 'utf8').replace(/\r\n?/g, '\n')
+  expect(await panel.locator('.nb-code-line').count()).toBe(demoText.split('\n').length - (demoText.endsWith('\n') ? 1 : 0))
+  await expect(panel.locator('.nb-code-link')).toHaveAttribute('href', `https://github.com/yuweiyang9611/DataStructureAndAlgorithm/blob/main/${demoPath(firstUnit.id)}`)
+  await expect(panel.getByRole('button', { name: '运行', exact: true })).toBeVisible()
+
+  await panel.locator('.nb-code-tab').nth(1).click()
+  await expect(panel.locator('.nb-code-tab[aria-selected="true"]')).toHaveText(firstUnit.sources[0].split('/').pop()!)
+  await expect(panel.locator('.nb-code-line').first()).toBeVisible()
   const text = readFileSync(firstUnit.sources[0], 'utf8').replace(/\r\n?/g, '\n')
-  expect(lineCount).toBe(text.split('\n').length - (text.endsWith('\n') ? 1 : 0))
+  const lineCount = text.split('\n').length - (text.endsWith('\n') ? 1 : 0)
+  // The previous tab's lines stay until the file arrives, so wait for the count instead of reading it once.
+  await expect(panel.locator('.nb-code-line')).toHaveCount(lineCount)
   await expect(panel.locator('.nb-code-line').first()).toHaveAttribute('data-line', '1')
   await expect(panel.locator('.nb-code-note')).toHaveText(`${lineCount} 行`)
   expect(await panel.locator('.nb-code-line .nb-code-text .tok-keyword').count()).toBeGreaterThan(0)
@@ -40,13 +52,14 @@ test('a unit opens its source and test in the panel, coloured and numbered, and 
   // One text span per line, so the grid stays two columns.
   expect(await panel.locator('.nb-code-line').first().evaluate((line) => line.children.length)).toBe(1)
   await expect(panel.locator('.nb-code-link')).toHaveAttribute('href', `https://github.com/yuweiyang9611/DataStructureAndAlgorithm/blob/main/${firstUnit.sources[0]}`)
-  await expect(panel.locator('.nb-code-tab[aria-selected="true"]')).toHaveText(firstUnit.sources[0].split('/').pop()!)
+  // The run actions belong to the demo tab only.
+  await expect(panel.getByRole('button', { name: '运行', exact: true })).toHaveCount(0)
 
-  await panel.locator('.nb-code-tab').nth(1).click()
+  await panel.locator('.nb-code-tab').nth(2).click()
   await expect(panel.locator('.nb-code-tab[aria-selected="true"]')).toHaveText(firstUnit.tests[0].split('/').pop()!)
   await expect(panel.locator('.nb-code-link')).toHaveAttribute('href', `https://github.com/yuweiyang9611/DataStructureAndAlgorithm/blob/main/${firstUnit.tests[0]}`)
   await expect(panel.locator('.nb-code-line').first()).toBeVisible()
-  expect(requests.length).toBe(2)
+  expect(requests.length).toBe(3)
 
   // The listed files open on the site, not on GitHub.
   for (const link of await unit.locator('.unit-resource-grid a').all()) {
