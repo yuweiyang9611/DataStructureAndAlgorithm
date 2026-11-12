@@ -5,9 +5,12 @@
 // docs/demos/ is compiled and run on the desktop engine with the same references and the
 // same entry the browser uses, so docs:build never ships a demo that cannot run.
 //
-// Needs the .NET 10 SDK pinned in tools/browser-runtime/global.json with the wasm-tools and
-// wasm-experimental workloads (`dotnet workload install wasm-tools wasm-experimental`).
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+// Needs a .NET 10 SDK (tools/browser-runtime/global.json takes 10.0.100 or any later feature band)
+// with the wasm-tools and wasm-experimental workloads (`dotnet workload install wasm-tools
+// wasm-experimental`). Any .NET 10 patch works: the host has no lock file, because its one package,
+// Microsoft.NET.Sdk.WebAssembly.Pack, comes at the installed workload's version; Roslyn stays locked
+// in ExerciseEngine and DemoCheck, and the restore below runs in locked mode.
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { dirname, join, relative } from 'node:path'
@@ -57,9 +60,14 @@ function findDirectory(root, name) {
   return undefined
 }
 
-// 1. The host: restore against the lock files, publish for browser-wasm.
+// 1. The host: restore against the lock files, publish for browser-wasm. The host itself is not locked
+// (see BrowserExercises.csproj), so a package added there would escape the lock: keep them in ExerciseEngine.
+if (/<PackageReference\b/.test(readFileSync(join(hostDirectory, 'BrowserExercises.csproj'), 'utf8'))) {
+  throw new Error('BrowserExercises.csproj has a PackageReference. The host has no lock file; add the package to ExerciseEngine, whose lock file covers it.')
+}
 run(['restore', 'BrowserExercises.csproj', '--locked-mode'], hostDirectory,
-  'Browser host restore failed. Install the SDK pinned in tools/browser-runtime/global.json plus the wasm-tools and wasm-experimental workloads.')
+  'Browser host restore failed. Install a .NET 10 SDK with the wasm-tools and wasm-experimental workloads. ' +
+  'If NU1004 names a Roslyn package, refresh the ExerciseEngine and DemoCheck lock files with `dotnet restore --force-evaluate`.')
 run(['publish', 'BrowserExercises.csproj', '-c', 'Release', '--no-restore'], hostDirectory, 'Browser host publish failed.')
 const hostOutput = join(hostDirectory, 'bin', 'Release')
 const framework = findDirectory(hostOutput, '_framework')

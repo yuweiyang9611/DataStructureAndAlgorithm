@@ -134,7 +134,7 @@ dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter
 
 每个学习单元顶上有一条学习步骤带（读、看代码、跑、自测、记一笔），状态只来自记录：开始学习、面板里打开过文件、在浏览器里跑完示例、答对自测、保存过笔记。每个单元都有一段 `docs/demos/<unit-id>.cs` 示例（面板里的“试一试”），在浏览器里由 Roslyn + .NET WebAssembly 运行时编译执行，类库和四个综合项目编成引用一起装进运行时；示例可以改一改再跑。
 
-前端使用 Node.js 24，浏览器运行时需要 .NET 10 SDK 以及 `wasm-tools`、`wasm-experimental` 两个工作负载。`docs:runtime` 发布 `tools/browser-runtime/` 下的运行时，把类库编成引用，并在桌面引擎里把 22 个示例各编译运行一遍，输出到 `docs/public/runtime/`（约 60 MB，不入库）；`docs:build` 没有它会直接失败。`docs:build` 随后运行 `docs:source`，把课程用到的 C# 源码和示例按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
+前端使用 Node.js 24，浏览器运行时需要 .NET 10 SDK 以及 `wasm-tools`、`wasm-experimental` 两个工作负载，任何 .NET 10 补丁版本都可以：宿主项目 `BrowserExercises` 不写锁文件（它唯一的包 `Microsoft.NET.Sdk.WebAssembly.Pack` 跟着已装工作负载的版本走），Roslyn 仍由 `ExerciseEngine` 和 `DemoCheck` 的锁文件锁定，并以锁定模式还原。`docs:runtime` 发布 `tools/browser-runtime/` 下的运行时，把类库编成引用，并在桌面引擎里把 22 个示例各编译运行一遍，输出到 `docs/public/runtime/`（约 60 MB，不入库）；`docs:build` 没有它会直接失败。`docs:build` 随后运行 `docs:source`，把课程用到的 C# 源码和示例按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
 
 ```powershell
 dotnet workload install wasm-tools wasm-experimental
