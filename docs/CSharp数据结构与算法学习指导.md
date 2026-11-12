@@ -74,7 +74,7 @@ search: false
 
 ## 3. 环境与常用命令 {#main-environment}
 
-仓库通过 `global.json` 请求稳定的 .NET 10 SDK，并允许在 .NET 10 内滚动到最新 feature band；类库、测试、演示、基准和综合场景项目统一以 .NET 10 / C# 14 为基线。确认环境：
+仓库不锁定 SDK 版本，装有 .NET 10 或更高版本的 SDK 即可构建，使用的是本机已装的最新 SDK；类库、测试、演示、基准和综合场景项目统一以 .NET 10 / C# 14 为基线。确认环境：
 
 ```powershell
 dotnet --info
