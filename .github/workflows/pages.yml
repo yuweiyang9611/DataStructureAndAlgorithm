@@ -15,7 +15,6 @@ on:
       - "tools/browser-runtime/**"
       - "DataStructureAndAlgorithm*/**"
       - "DataStructureAndAlgorithm.slnx"
-      - "global.json"
       - "Directory.Build.*"
       - ".github/workflows/pages.yml"
   workflow_dispatch:

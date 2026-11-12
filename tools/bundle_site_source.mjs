@@ -27,7 +27,7 @@ const sourceRoots = [
   'DataStructureAndAlgorithm.Scenarios.ProjectScheduling',
   demoDirectory
 ]
-const rootFiles = ['README.md', 'DataStructureAndAlgorithm.slnx', 'Directory.Build.props', 'Directory.Build.targets', 'global.json', 'coverage.runsettings']
+const rootFiles = ['README.md', 'DataStructureAndAlgorithm.slnx', 'Directory.Build.props', 'Directory.Build.targets', 'coverage.runsettings']
 const sourceExtensions = new Set(['.cs', '.csproj', '.props', '.targets', '.slnx', '.json', '.md', '.ps1', '.psd1', '.cmd', '.sh', '.yml', '.yaml', '.runsettings', '.txt', '.editorconfig'])
 // Only files git tracks are bundled, so local build output, coverage and mutation reports never get in. The
 // directory list is a second guard for the same folders; it is case-sensitive on purpose.

@@ -29,7 +29,7 @@ if (problems.length === 0) {
 if (problems.length) {
   console.error(`浏览器运行时不完整（${relative(repositoryRoot, runtime)}）：`)
   for (const problem of problems) console.error(`- ${problem}`)
-  console.error('先运行 npm run docs:runtime（需要 .NET 10 SDK 以及 wasm-tools、wasm-experimental 两个工作负载），再运行 docs:build。')
+  console.error('先运行 npm run docs:runtime（需要 .NET 10 或更高版本的 SDK 以及 WebAssembly 工作负载，见 README），再运行 docs:build。')
   process.exit(1)
 }
 console.log('Browser runtime is present; the build can go on.')
