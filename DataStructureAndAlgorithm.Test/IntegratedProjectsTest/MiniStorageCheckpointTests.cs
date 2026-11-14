@@ -108,7 +108,7 @@ public sealed class MiniStorageCheckpointTests
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root is not null && !File.Exists(Path.Combine(root.FullName, "DataStructureAndAlgorithm.slnx"))) root = root.Parent;
         Assert.NotNull(root);
-        var dll = Path.Combine(root.FullName, "DataStructureAndAlgorithm.StorageCrashHost", "bin", configuration, "net10.0", "DataStructureAndAlgorithm.StorageCrashHost.dll");
+        var dll = Path.Combine(root.FullName, "DataStructureAndAlgorithm.StorageCrashHost", "bin", configuration, "net11.0", "DataStructureAndAlgorithm.StorageCrashHost.dll");
         var info = new ProcessStartInfo("dotnet") { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
         info.ArgumentList.Add(dll); info.ArgumentList.Add(area.Path); info.ArgumentList.Add(((PersistenceStage)stageValue).ToString());
         using var process = Process.Start(info)!;

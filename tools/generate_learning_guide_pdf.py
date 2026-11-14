@@ -92,7 +92,7 @@ PARTS = (
     Part(
         "第二篇  进阶数据结构与算法",
         REPOSITORY_ROOT / "docs" / "CSharp数据结构与算法进阶学习指导.md",
-        "深入两种哈希策略、红黑树、跳表、非比较排序、区间结构与进阶算法，并补充 C# 14 工程实践。",
+        "深入两种哈希策略、红黑树、跳表、非比较排序、区间结构与进阶算法，并补充 C# 15 工程实践。",
     ),
     Part(
         "第三篇  API 设计与比较器约定",
@@ -108,6 +108,17 @@ PARTS = (
         "第五篇  核心 19 题精讲",
         REPOSITORY_ROOT / "docs" / "LeetCode经典题目学习指导.md",
         "选取 19 道高频题展开推理过程，帮助把题型识别落实为可独立书写、可测试的 C# 代码。",
+    ),
+    Part(
+        "第六篇  P3 数论、位运算与高级算法",
+        REPOSITORY_ROOT / "docs" / "P3数论位运算与高级算法学习指导.md",
+        "补齐数论与位运算，形成高级图、字符串和动态规划算法族，并讲解质量门禁、结构化追踪和 14 道非重复专题题。",
+    ),
+    Part(
+        "第七篇  数据结构与算法综合项目实战",
+        REPOSITORY_ROOT / "docs" / "综合项目实战学习指导.md",
+        "通过城市配送、迷你全文检索、项目资源排程和迷你存储引擎，把自实现结构组合成端到端应用，"
+        "并用版本化追踪、模型测试、跨平台 CI 与基准趋势持续证明跨模块不变量。",
     ),
 )
 
@@ -342,7 +353,7 @@ class StudyGuideDocTemplate(BaseDocTemplate):
             bottomMargin=BOTTOM_MARGIN,
             title="C# 数据结构与算法完整学习指导",
             author="DataStructureAndAlgorithm 学习项目",
-            subject=".NET 10、C# 14、数据结构、算法与 LeetCode 100 题",
+            subject=".NET 11、C# 15、数据结构、算法与 LeetCode 100 题",
             creator="DataStructureAndAlgorithm PDF Generator",
         )
         self.styles = styles
@@ -385,7 +396,7 @@ class StudyGuideDocTemplate(BaseDocTemplate):
             canvas.drawRightString(
                 PAGE_WIDTH - RIGHT_MARGIN,
                 PAGE_HEIGHT - 10 * mm,
-                ".NET 10 / C# 14",
+                ".NET 11 / C# 15",
             )
             canvas.drawCentredString(PAGE_WIDTH / 2, 8.2 * mm, f"第 {document.page - 1} 页")
 
@@ -704,8 +715,8 @@ def cover_story(styles: dict[str, ParagraphStyle]) -> list[Flowable]:
     badges = Table(
         [
             [
-                Paragraph(".NET 10", badge_style),
-                Paragraph("C# 14", badge_style),
+                Paragraph(".NET 11", badge_style),
+                Paragraph("C# 15", badge_style),
                 Paragraph("LeetCode 100 题", badge_style),
             ]
         ],

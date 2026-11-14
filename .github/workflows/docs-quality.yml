@@ -23,7 +23,7 @@ jobs:
           cache: npm
       - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       # The browser runtime (tools/browser-runtime) publishes for browser-wasm; both workloads are needed.
       - run: dotnet workload install wasm-tools wasm-experimental
       - run: npm ci

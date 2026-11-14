@@ -206,7 +206,7 @@ public sealed class ScenarioCliContractTests
             projectName,
             "bin",
             configuration,
-            "net10.0",
+            "net11.0",
             $"{projectName}.dll");
 
         Assert.True(File.Exists(scenarioDll), $"场景程序集尚未构建：{scenarioDll}");

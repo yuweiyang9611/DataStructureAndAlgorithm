@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build-and-test:
-    name: Build and test (.NET 10 / ${{ matrix.os }})
+    name: Build and test (${{ matrix.os }})
     strategy:
       # 一个系统失败后仍让另一个系统完成，报告才足以区分代码回归与平台差异。
       fail-fast: false
@@ -25,10 +25,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Install .NET 10 SDK
+      - name: Install .NET 11 SDK
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
 
       - name: Restore dependencies
         run: dotnet restore DataStructureAndAlgorithm.slnx

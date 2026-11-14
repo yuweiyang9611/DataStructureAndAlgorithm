@@ -4,7 +4,7 @@
 >
 > 新克隆请按 [Git 隐私 hooks 启用说明](GIT_HOOKS_SETUP.md)执行一次本地配置。
 
-一个基于 `.NET 10` 和 `C# 14` 的数据结构与算法学习项目。仓库包含算法类库、xUnit/FsCheck 测试、可输出 JSON/Mermaid 步骤的 Demo、四个支持结构化追踪的综合场景，以及独立的 BenchmarkDotNet 性能实验；不包含 ASP.NET 服务。
+一个基于 `.NET 11` 和 `C# 15` 的数据结构与算法学习项目。仓库包含算法类库、xUnit/FsCheck 测试、可输出 JSON/Mermaid 步骤的 Demo、四个支持结构化追踪的综合场景，以及独立的 BenchmarkDotNet 性能实验；不包含 ASP.NET 服务。
 
 在线浏览与学习：[算法研习室](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/)。可从 [10 分钟快速开始](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0.html)、[22 个可验证学习单元（自测、证据与复习）](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/%E5%AD%A6%E4%B9%A0%E5%8D%95%E5%85%83.html)或 [Trace 实验室](https://yuweiyang9611.github.io/DataStructureAndAlgorithm/%E8%BF%BD%E8%B8%AA%E5%AE%9E%E9%AA%8C%E5%AE%A4.html)直接进入。
 
@@ -34,7 +34,7 @@
 | 缓存与概率结构 | LRU、LFU、Bloom Filter | 淘汰策略、派生状态、一定位不存在/可能存在 | 平均常数或对数级，依实现而定 |
 | 动态规划与回溯 | LCS、背包、零钱、LIS、编辑距离、矩阵链、树形/状态压缩 DP、n 皇后 | 状态定义、空间压缩、答案恢复、剪枝 | 依状态规模而定，部分为指数级 |
 | 内存与性能 | `Span<T>`、`ArrayPool<T>`、BenchmarkDotNet | 零拷贝视图、所有权、时间与分配趋势 | 保持算法复杂度，减少分配 |
-| LeetCode 题库 | 100 道主线题 + P3 专题题 | C# 14 实现、选择理由、不变量、复杂度和题号测试 | 覆盖数组、链表、树、图、搜索、贪心与 DP |
+| LeetCode 题库 | 100 道主线题 + P3 专题题 | C# 15 实现、选择理由、不变量、复杂度和题号测试 | 覆盖数组、链表、树、图、搜索、贪心与 DP |
 | 综合项目 | 配送 V2、搜索 V2、调度 V2、迷你存储 | 最小费用最大流、位置索引/BM25、精确调度、B+ 树/Bloom/LFU/WAL | 由各流水线阶段共同决定 |
 
 其中 `V` 为顶点数，`E` 为边数，`n` 为输入规模。复杂度表给出的是主导量级；精确前置条件、最坏情况和生产限制见对应学习指导。
@@ -60,7 +60,7 @@
 - `DataStructureAndAlgorithm.Scenarios.ProjectScheduling/`：DAG 约束、懒标记资源树、贪心排期与小规模精确对照。
 - `DataStructureAndAlgorithm.Scenarios.MiniStorage/`：B+ 树主索引、Bloom/LFU 加速、校验 WAL、快照检查点和增量恢复。
 - `DataStructureAndAlgorithm.Benchmarks/`：使用 BenchmarkDotNet 比较教学实现、标准库和场景趋势，并报告内存分配。
-- `DataStructureAndAlgorithm/LeetCode/`：按题型组织的经典题 C# 14 解法。
+- `DataStructureAndAlgorithm/LeetCode/`：按题型组织的经典题 C# 15 解法。
 - `DataStructureAndAlgorithm.Test/`：xUnit、FsCheck、模型/差分/状态机测试、追踪契约和结构不变量验证。
 - `docs/`：按学习顺序组织的源码导读、复杂度、限制和 C# 最佳实践。
 - `.github/workflows/`：Release 构建测试、跨平台契约、质量门禁、变异测试与周期基准。
@@ -134,7 +134,7 @@ dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter
 
 每个学习单元顶上有一条学习步骤带（读、看代码、跑、自测、记一笔），状态只来自记录：开始学习、面板里打开过文件、在浏览器里跑完示例、答对自测、保存过笔记。每个单元都有一段 `docs/demos/<unit-id>.cs` 示例（面板里的“试一试”），在浏览器里由 Roslyn + .NET WebAssembly 运行时编译执行，类库和四个综合项目编成引用一起装进运行时；示例可以改一改再跑。
 
-前端使用 Node.js 24，浏览器运行时需要 .NET 10 或更高版本的 SDK 以及两个 WebAssembly 工作负载。仓库不锁定 SDK 版本，构建使用本机已装的最新 SDK：在 .NET 10 SDK 上安装 `wasm-tools`、`wasm-experimental`，在更高版本的 SDK 上改装 `wasm-tools-net10`、`wasm-experimental-net10`。任何补丁版本都可以：宿主项目 `BrowserExercises` 不写锁文件（它唯一的包 `Microsoft.NET.Sdk.WebAssembly.Pack` 跟着已装工作负载的版本走），Roslyn 仍由 `ExerciseEngine` 和 `DemoCheck` 的锁文件锁定，并以锁定模式还原。`docs:runtime` 发布 `tools/browser-runtime/` 下的运行时，把类库编成引用，并在桌面引擎里把 22 个示例各编译运行一遍，输出到 `docs/public/runtime/`（约 60 MB，不入库）；`docs:build` 没有它会直接失败。`docs:build` 随后运行 `docs:source`，把课程用到的 C# 源码和示例按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
+前端使用 Node.js 24，浏览器运行时需要 .NET 11 或更高版本的 SDK 以及两个 WebAssembly 工作负载。仓库不锁定 SDK 版本，构建使用本机已装的最新 SDK：在 .NET 11 SDK 上安装 `wasm-tools`、`wasm-experimental`，在更高版本的 SDK 上改装 `wasm-tools-net11`、`wasm-experimental-net11`。任何补丁版本都可以：宿主项目 `BrowserExercises` 不写锁文件（它唯一的包 `Microsoft.NET.Sdk.WebAssembly.Pack` 跟着已装工作负载的版本走），Roslyn 仍由 `ExerciseEngine` 和 `DemoCheck` 的锁文件锁定，并以锁定模式还原。`docs:runtime` 发布 `tools/browser-runtime/` 下的运行时，把类库编成引用，并在桌面引擎里把 22 个示例各编译运行一遍，输出到 `docs/public/runtime/`（约 60 MB，不入库）；`docs:build` 没有它会直接失败。`docs:build` 随后运行 `docs:source`，把课程用到的 C# 源码和示例按当前提交打包到 `docs/public/source/`（不入库），站点里的学习单元、Trace 实验室和“源码”页面就在站内读这些文件：
 
 ```powershell
 dotnet workload install wasm-tools wasm-experimental

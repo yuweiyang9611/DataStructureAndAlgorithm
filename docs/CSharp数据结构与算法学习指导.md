@@ -8,7 +8,7 @@ search: false
 
 ## 1. 这份指导解决什么问题
 
-本仓库是一个 `.NET 10` / `C# 14` 教学项目。目标不只是“记住算法代码”，而是建立以下能力：
+本仓库是一个 `.NET 11` / `C# 15` 教学项目。目标不只是“记住算法代码”，而是建立以下能力：
 
 1. 能说清数据结构维护了什么不变量。
 2. 能从输入规模推导时间、空间复杂度。
@@ -74,7 +74,7 @@ search: false
 
 ## 3. 环境与常用命令 {#main-environment}
 
-仓库不锁定 SDK 版本，装有 .NET 10 或更高版本的 SDK 即可构建，使用的是本机已装的最新 SDK；类库、测试、演示、基准和综合场景项目统一以 .NET 10 / C# 14 为基线。确认环境：
+仓库不锁定 SDK 版本，装有 .NET 11 或更高版本的 SDK 即可构建，使用的是本机已装的最新 SDK；类库、测试、演示、基准和综合场景项目统一以 .NET 11 / C# 15 为基线。确认环境：
 
 ```powershell
 dotnet --info
@@ -122,7 +122,7 @@ dotnet run --project DataStructureAndAlgorithm.Benchmarks -c Release -- --filter
 dotnet test DataStructureAndAlgorithm.slnx --filter FullyQualifiedName~SortingTest
 ```
 
-仓库的 `.github/workflows/ci.yml` 会在 push 和 pull request 上使用相同的 .NET 10 Release 流程执行 restore、build、test 与覆盖率收集。把构建和测试拆开并在后续命令使用 `--no-restore`、`--no-build`，可以明确区分“依赖恢复失败”“编译失败”和“行为测试失败”，也避免重复工作。
+仓库的 `.github/workflows/ci.yml` 会在 push 和 pull request 上使用相同的 .NET 11 Release 流程执行 restore、build、test 与覆盖率收集。把构建和测试拆开并在后续命令使用 `--no-restore`、`--no-build`，可以明确区分“依赖恢复失败”“编译失败”和“行为测试失败”，也避免重复工作。
 
 学习时建议先使用 Debug 断点或 Demo 追踪理解过程，完成后再跑 Release 全量测试。算法性能比较不能只看一次运行时间；仓库已经把 BenchmarkDotNet 放在独立项目中，避免在单元测试里用 `Stopwatch` 得出受 JIT、预热、GC 和机器负载影响的结论。
 
@@ -360,7 +360,7 @@ comparer ??= Comparer<T>.Default;
 
 ### 6.8 使用现代语法但保持意图清晰
 
-项目显式使用 C# 14，并在适合的位置采用现代语法：
+项目显式使用 C# 15，并在适合的位置采用现代语法：
 
 - 集合表达式 `[]` 简化数组、列表和空集合初始化。
 - 主构造函数适合依赖少、初始化关系清晰的节点类型。
