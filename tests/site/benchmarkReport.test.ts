@@ -6,9 +6,9 @@ import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 const script = resolve('tools/benchmark_report.mjs')
-function report(median = 2000, runtime = '.NET 10.0.12') {
+function report(median = 2000, runtime = '.NET 11.0.12') {
   return {
-    HostEnvironmentInfo: { OsVersion:'Windows 11', ProcessorName:'test CPU', RuntimeVersion:runtime, Architecture:'X64', DotNetCliVersion:'10.0.401', BenchmarkDotNetVersion:'0.15.8' },
+    HostEnvironmentInfo: { OsVersion:'Windows 11', ProcessorName:'test CPU', RuntimeVersion:runtime, Architecture:'X64', DotNetCliVersion:'11.0.100', BenchmarkDotNetVersion:'0.15.8' },
     Benchmarks: [20,100].map(count => ({
       FullName:'Bench.SchedulingScalingScenarioBenchmarks.Greedy(TaskCount: '+count+')',
       Type:'SchedulingScalingScenarioBenchmarks', Method:'Greedy', Parameters:'TaskCount='+count,
@@ -33,7 +33,7 @@ test('benchmark history compares equal environments and reports slower measureme
     f.write(f.current,report(2000));f.write(f.previous,report(1000))
     assert.equal(f.run().status,0)
     assert.match(f.summary(),/100\.0%/)
-    f.write(f.previous,report(1000,'.NET 10.0.11'))
+    f.write(f.previous,report(1000,'.NET 11.0.11'))
     assert.equal(f.run().status,0)
     assert.match(f.summary(),/no comparable baseline/)
     assert.doesNotMatch(f.summary(),/100\.0%/)

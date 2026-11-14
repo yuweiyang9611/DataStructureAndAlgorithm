@@ -6,8 +6,8 @@
     course library itself is still built with its own gates when the host references it.
   -->
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>14.0</LangVersion>
+    <TargetFramework>net11.0</TargetFramework>
+    <LangVersion>15.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>

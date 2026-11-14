@@ -50,7 +50,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
 
       - name: Install the WebAssembly workloads for the browser runtime
         run: dotnet workload install wasm-tools wasm-experimental

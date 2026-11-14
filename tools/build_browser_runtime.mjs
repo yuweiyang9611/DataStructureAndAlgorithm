@@ -5,10 +5,10 @@
 // docs/demos/ is compiled and run on the desktop engine with the same references and the
 // same entry the browser uses, so docs:build never ships a demo that cannot run.
 //
-// Needs a .NET SDK, version 10 or later. The SDK is not pinned, so the newest installed one is used.
-// It also needs the WebAssembly workloads for the host's net10.0 target: on a .NET 10 SDK,
+// Needs a .NET SDK, version 11 or later. The SDK is not pinned, so the newest installed one is used.
+// It also needs the WebAssembly workloads for the host's net11.0 target: on a .NET 11 SDK,
 // `dotnet workload install wasm-tools wasm-experimental`; on a newer SDK,
-// `dotnet workload install wasm-tools-net10 wasm-experimental-net10`. Any patch works: the host has
+// `dotnet workload install wasm-tools-net11 wasm-experimental-net11`. Any patch works: the host has
 // no lock file, because its one package, Microsoft.NET.Sdk.WebAssembly.Pack, comes at the installed
 // workload's version; Roslyn stays locked in ExerciseEngine and DemoCheck, and the restore below
 // runs in locked mode.
@@ -68,8 +68,8 @@ if (/<PackageReference\b/.test(readFileSync(join(hostDirectory, 'BrowserExercise
   throw new Error('BrowserExercises.csproj has a PackageReference. The host has no lock file; add the package to ExerciseEngine, whose lock file covers it.')
 }
 run(['restore', 'BrowserExercises.csproj', '--locked-mode'], hostDirectory,
-  'Browser host restore failed. Install a .NET SDK (10 or later) with the WebAssembly workloads: ' +
-  'wasm-tools and wasm-experimental on a .NET 10 SDK, wasm-tools-net10 and wasm-experimental-net10 on a newer SDK. ' +
+  'Browser host restore failed. Install a .NET SDK (11 or later) with the WebAssembly workloads: ' +
+  'wasm-tools and wasm-experimental on a .NET 11 SDK, wasm-tools-net11 and wasm-experimental-net11 on a newer SDK. ' +
   'If NU1004 names a Roslyn package, refresh the ExerciseEngine and DemoCheck lock files with `dotnet restore --force-evaluate`.')
 run(['publish', 'BrowserExercises.csproj', '-c', 'Release', '--no-restore'], hostDirectory, 'Browser host publish failed.')
 const hostOutput = join(hostDirectory, 'bin', 'Release')
@@ -81,7 +81,7 @@ if (!framework || !compilerReferences) throw new Error(`Published browser framew
 const courseAssemblies = []
 for (const project of courseProjects) {
   run(['build', join(project, `${project}.csproj`), '-c', 'Release', '--nologo'], repositoryRoot, `Build of ${project} failed.`)
-  const assembly = join(repositoryRoot, project, 'bin', 'Release', 'net10.0', `${project}.dll`)
+  const assembly = join(repositoryRoot, project, 'bin', 'Release', 'net11.0', `${project}.dll`)
   if (!existsSync(assembly)) throw new Error(`Built assembly is missing: ${assembly}`)
   courseAssemblies.push(assembly)
 }

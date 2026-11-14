@@ -14,7 +14,7 @@ search: false
 
 1. 把基础结构组合成真实组件，例如“字典 + 双向链表 = LRU”。
 2. 根据操作类型和输入约束选择区间结构、图算法或字符串算法。
-3. 使用 C# 14 清楚表达泛型约束、比较规则、所有权、异常契约和测试。
+3. 使用 C# 15 清楚表达泛型约束、比较规则、所有权、异常契约和测试。
 
 每个专题建议按以下顺序学习：
 
@@ -332,7 +332,7 @@ Z Algorithm 维护最靠右的前缀匹配区间 `[left, right)`。新位置在�
 
 练习：实现去重排列、组合总和、数独和单词搜索；每次递归返回前检查状态是否完全恢复。
 
-## 13. 更深入的 C# 14 实践 {#advanced-csharp}
+## 13. 更深入的 C# 15 实践 {#advanced-csharp}
 
 ### 13.1 API 与所有权
 
@@ -622,7 +622,7 @@ LSD 从最低有效位开始。高位分配时，必须保留低位已经建立�
 `.github/workflows/ci.yml` 在 master/main 的 push 与 pull request 上运行：
 
 1. Checkout 仓库。
-2. 安装 .NET 10 SDK。
+2. 安装 .NET 11 SDK。
 3. Restore，单独暴露依赖问题。
 4. Release Build，并使用 `--no-restore` 避免重复恢复。
 5. Test，并使用 `--no-build` 确保测试的是刚刚构建的产物，同时收集 TRX 与 XPlat Coverage。

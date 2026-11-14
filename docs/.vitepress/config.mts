@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 import { injectKitHead, notebookCodeTheme, notebookMarkdown, notebookShellColors } from './notebook.mts'
 import { repository } from './data/repository.ts'
 
-const siteDescription = '用 C# 14 系统学习数据结构、算法、测试方法与综合项目。'
+const siteDescription = '用 C# 15 系统学习数据结构、算法、测试方法与综合项目。'
 const siteUrl = 'https://yuweiyang9611.github.io/DataStructureAndAlgorithm/'
 const socialImage = 'https://yuweiyang9611.github.io/DataStructureAndAlgorithm/og.png'
 const completeSourcePages = new Set([
@@ -84,9 +84,9 @@ export default defineConfig({
         ['meta', { property: 'og:image', content: socialImage }],
         ['meta', { property: 'og:image:width', content: '1200' }],
         ['meta', { property: 'og:image:height', content: '630' }],
-        ['meta', { property: 'og:image:alt', content: '算法研习室：用 C# 14 构建可解释、可验证的算法能力' }],
+        ['meta', { property: 'og:image:alt', content: '算法研习室：用 C# 15 构建可解释、可验证的算法能力' }],
         ['meta', { name: 'twitter:image', content: socialImage }],
-        ['meta', { name: 'twitter:image:alt', content: '算法研习室：用 C# 14 构建可解释、可验证的算法能力' }]
+        ['meta', { name: 'twitter:image:alt', content: '算法研习室：用 C# 15 构建可解释、可验证的算法能力' }]
       )
     }
 
@@ -248,7 +248,7 @@ export default defineConfig({
     },
     footer: {
       message: '教学实现用于理解不变量、复杂度与工程取舍。',
-      copyright: 'DataStructureAndAlgorithm · C# 14 / .NET 10'
+      copyright: 'DataStructureAndAlgorithm · C# 15 / .NET 11'
     }
   }
 })

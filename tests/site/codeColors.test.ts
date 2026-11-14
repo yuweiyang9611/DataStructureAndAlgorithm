@@ -53,12 +53,12 @@ test('an unknown language is plain text with no kinds', () => {
 })
 
 test('project files, data files and shell lines get their own jobs', () => {
-  const xml = highlight('<Project Sdk="Microsoft.NET.Sdk">\n  <!-- note -->\n  <TargetFramework>net10.0</TargetFramework>\n</Project>', 'xml')
+  const xml = highlight('<Project Sdk="Microsoft.NET.Sdk">\n  <!-- note -->\n  <TargetFramework>net11.0</TargetFramework>\n</Project>', 'xml')
   const xmlKinds = xml.filter((token) => token.kind).map((token) => `${token.kind}:${token.text}`)
   assert.ok(xmlKinds.includes('type:Project') && xmlKinds.includes('meta:Sdk') && xmlKinds.includes('string:"Microsoft.NET.Sdk"') && xmlKinds.includes('comment:<!-- note -->'))
-  const json = highlight('{ "sdk": { "version": "10.0.100", "rollForward": true } }', 'json')
+  const json = highlight('{ "sdk": { "version": "11.0.100", "rollForward": true } }', 'json')
   const jsonKinds = json.filter((token) => token.kind).map((token) => `${token.kind}:${token.text}`)
-  assert.ok(jsonKinds.includes('type:"sdk"') && jsonKinds.includes('string:"10.0.100"') && jsonKinds.includes('keyword:true'))
+  assert.ok(jsonKinds.includes('type:"sdk"') && jsonKinds.includes('string:"11.0.100"') && jsonKinds.includes('keyword:true'))
   const shell = highlight('dotnet test --filter "Name~Sort" # once', 'shell')
   const shellKinds = shell.filter((token) => token.kind).map((token) => `${token.kind}:${token.text}`)
   assert.ok(shellKinds.includes('type:dotnet') && shellKinds.includes('keyword:--filter') && shellKinds.includes('string:"Name~Sort"') && shellKinds.includes('comment:# once'))

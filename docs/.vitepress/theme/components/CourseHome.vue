@@ -109,7 +109,7 @@ const tracks: Row[] = [
   { key: trackWords.main, hue: trackHues.main, title: '主线路线总览', href: '/主线/', note: '从线性结构、排序和树出发，掌握字符串、图、动态规划与回溯，最后用测试证据验收。', state: '8 个阶段' },
   { key: trackWords.advanced, hue: trackHues.advanced, title: '进阶路线总览', href: '/进阶/', note: '哈希、并查集、缓存、区间结构与高级图算法，以及比较器、不变量和性能证据。', state: '18 周计划' },
   { key: trackWords.practice, hue: trackHues.practice, title: '经典 19 题', href: '/LeetCode经典题目学习指导.html', note: '入门题型：每题先说清选择理由和不变量，再写 C# 实现。', state: '19 题' },
-  { key: trackWords.practice, hue: trackHues.practice, title: '完整 100 题', href: '/LeetCode100题完整学习指导.html', note: '按题型组织的 C# 14 主线，逐题解释选择理由、核心不变量和常见错误。', state: '100 题 · 16 周' },
+  { key: trackWords.practice, hue: trackHues.practice, title: '完整 100 题', href: '/LeetCode100题完整学习指导.html', note: '按题型组织的 C# 15 主线，逐题解释选择理由、核心不变量和常见错误。', state: '100 题 · 16 周' },
   { key: trackWords.practice, hue: trackHues.practice, title: 'P3 高级专题', href: '/P3数论位运算与高级算法学习指导.html', note: '数论、位运算、网络流、高级字符串与 DP。', state: '14 题' },
   { key: trackWords.project, hue: trackHues.project, title: '综合项目总览', href: '/综合项目/', note: '配送、搜索、调度和存储：在目标函数、容量和恢复约束里组合多个结构。', state: '4 个项目', id: 'projects-title' }
 ]
@@ -174,7 +174,7 @@ const singlePages: Row[] = [
         <pre class="nb-command" tabindex="0" aria-label="测试命令"><code>{{ commandDisplay }}</code></pre>
         <p class="run-actions">
           <button type="button" class="text-action" @click="copyCommand">{{ copyState === 'copied' ? '已复制' : copyState === 'failed' ? '复制失败' : '复制命令' }}</button>
-          <span class="run-note">在仓库根目录运行，需要 .NET 10 SDK。</span>
+          <span class="run-note">在仓库根目录运行，需要 .NET 11 SDK。</span>
           <span v-if="runUnit" class="run-links"><a :href="withBase(`${runUnit.guide}.html`)">阅读指南</a><template v-if="runUnit.trace"> · <a :href="withBase(`/追踪实验室.html?trace=${runUnit.trace}`)">打开 Trace</a></template></span>
         </p>
       </div>
