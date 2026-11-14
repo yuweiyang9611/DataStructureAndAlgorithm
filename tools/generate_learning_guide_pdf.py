@@ -92,7 +92,7 @@ PARTS = (
     Part(
         "第二篇  进阶数据结构与算法",
         REPOSITORY_ROOT / "docs" / "CSharp数据结构与算法进阶学习指导.md",
-        "深入两种哈希策略、红黑树、跳表、非比较排序、区间结构与进阶算法，并补充 C# 14 工程实践。",
+        "深入两种哈希策略、红黑树、跳表、非比较排序、区间结构与进阶算法，并补充 C# 15 工程实践。",
     ),
     Part(
         "第三篇  API 设计与比较器约定",
@@ -342,7 +342,7 @@ class StudyGuideDocTemplate(BaseDocTemplate):
             bottomMargin=BOTTOM_MARGIN,
             title="C# 数据结构与算法完整学习指导",
             author="DataStructureAndAlgorithm 学习项目",
-            subject=".NET 10、C# 14、数据结构、算法与 LeetCode 100 题",
+            subject=".NET 11、C# 15、数据结构、算法与 LeetCode 100 题",
             creator="DataStructureAndAlgorithm PDF Generator",
         )
         self.styles = styles
@@ -385,7 +385,7 @@ class StudyGuideDocTemplate(BaseDocTemplate):
             canvas.drawRightString(
                 PAGE_WIDTH - RIGHT_MARGIN,
                 PAGE_HEIGHT - 10 * mm,
-                ".NET 10 / C# 14",
+                ".NET 11 / C# 15",
             )
             canvas.drawCentredString(PAGE_WIDTH / 2, 8.2 * mm, f"第 {document.page - 1} 页")
 
@@ -704,8 +704,8 @@ def cover_story(styles: dict[str, ParagraphStyle]) -> list[Flowable]:
     badges = Table(
         [
             [
-                Paragraph(".NET 10", badge_style),
-                Paragraph("C# 14", badge_style),
+                Paragraph(".NET 11", badge_style),
+                Paragraph("C# 15", badge_style),
                 Paragraph("LeetCode 100 题", badge_style),
             ]
         ],

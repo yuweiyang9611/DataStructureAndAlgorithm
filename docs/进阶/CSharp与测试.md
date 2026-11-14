@@ -6,7 +6,7 @@ editLink: false
 
 # C# 与测试
 
-## 更深入的 C# 14 实践
+## 更深入的 C# 15 实践
 
 <!--@include: ../CSharp数据结构与算法进阶学习指导.md#advanced-csharp-->
 
