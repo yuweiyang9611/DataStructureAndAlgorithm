@@ -41,7 +41,12 @@ test('a late response cannot replace the selected trace; failed payload retries'
   await page.goto('追踪实验室.html')
   await expect(page.locator('.trace-event')).toBeVisible()
   const select=page.getByLabel('选择场景')
-  const ids=await select.locator('option').evaluateAll(nodes=>nodes.map(node=>(node as HTMLOptionElement).value))
+  // The scene ids come from the manifest the select is built from. Reading them with evaluateAll on the
+  // labelled select resolved getByLabel in the main world while selectOption resolves it in the utility
+  // world. Since Playwright 1.65 getByLabel reads ariaLabelledByElements (VitePress's navs carry
+  // aria-labelledby), and a read from both worlds crashes Playwright 1.65.1's Firefox 159 (build v1572):
+  // "Page crashed". Mozilla bug 2090055 (fixed in Firefox 163), microsoft/playwright#43967.
+  const ids=(JSON.parse(readFileSync('docs/public/traces/manifest.json','utf8')).traces as {id:string}[]).map(trace=>trace.id)
   const expected=JSON.parse(readFileSync('docs/public/traces/'+ids[2]+'.json','utf8')).trace[0]
   let release!:()=>void, started!:()=>void
   const held=new Promise<void>(resolve=>{release=resolve})
